@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <head>
-    <title>Markdown Template Generator</title>
+    <title>Hex Field Generator</title>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
         Array.prototype.random = function () {
@@ -340,30 +340,28 @@
     </style>
 </head>
 <body>
-<h1>Markdown Generator f&uuml;r die Verlassene K&uuml;ste</h1>
+<h1>Hex Field Generator</h1>
 <br/>
-All information are taken from The Welsh Piper: <a href="https://welshpiper.com/hex-based-campaign-design-part-1/">source</a>
+All information and tables are taken from The Welsh Piper: <a href="https://welshpiper.com/hex-based-campaign-design-part-1/">source</a>
 <br/>
 <hr/>
 <form>
-    <label for="x-coord">X-Koordinate</label>
+    <label for="x-coord">X-Coordinate</label>
     <input type="text" id="x-coord" value="001"/>
-    <label for="y-coord">Y-Koordinate</label>
+    <label for="y-coord">Y-Coordinate</label>
     <input type="text" id="y-coord" value="001"/>
-    <label for="primaryType">Gel&auml;ndetyp</label>
+    <label for="primaryType">Main Terrain Type</label>
     <select name="primaryType" id="primaryType">
-        <option value="water">Wasser</option>
-        <option value="swamp">Sumpf</option>
-        <option value="desert">W&uuml;ste</option>
-        <option value="plains">Ebene</option>
-        <option value="forest">Wald</option>
-        <option value="hills">H&uuml;gel</option>
-        <option value="mountain">Berge</option>
+        <option value="water">Water</option>
+        <option value="swamp">Swamp</option>
+        <option value="desert">Dessert</option>
+        <option value="plains">Plains</option>
+        <option value="forest">Forest</option>
+        <option value="hills">Hills</option>
+        <option value="mountain">Mountains</option>
     </select>
-    <button type="button" onclick="generate()">generieren</button>
+    <button type="button" onclick="generate()">generate</button>
 </form>
-
-
 <hr/>
 <pre id="markdown"></pre>
 <hr/>
