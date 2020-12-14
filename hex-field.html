@@ -296,8 +296,21 @@
             return[];
         }
 
+        function doMajorEncounter(enforceMajorEncounter, type, probabilityOffset)
+        {
+            const encounterProbability = {water: 0.1, swamp: 0.2, desert: 0.2, plains: 0.6, forest: 0.4, hills: 0.4, mountain: 0.2};
+            if (enforceMajorEncounter || !encounterProbability.hasOwnProperty(type)){
+                return true;
+            }
+            const probability = encounterProbability[type] + probabilityOffset;
+            return Math.random() <= probability;
+        }
+
         function generate(type) {
-            body = `# Hex Field: ${type}\n`;
+            const enforceMajorEncounter = document.getElementById("input_enforce").checked;
+            const probabilityOffset = parseFloat(document.getElementById("select_modifier").value);
+
+            let body = `# Hex Field: ${type}\n`;
 
             body += `## Terrain\n`;
             for (const terrain of getHexTerrains(type)){
@@ -305,10 +318,14 @@
             }
 
             body += `\n`;
-            const majorEncounter = ['settlement', 'fortress', 'religious order', 'ruin', 'monster lair', 'natural phenomenon'].random();
-            body += `## Major Encounter: ${majorEncounter}\n`;
-            for (const detail of getEncounterDetails(majorEncounter)){
-                body += `* ${detail}\n`;
+            if (doMajorEncounter(enforceMajorEncounter, type, probabilityOffset)){
+                const majorEncounter = ['settlement', 'fortress', 'religious order', 'ruin', 'monster lair', 'natural phenomenon'].random();
+                body += `## Major Encounter: ${majorEncounter}\n`;
+                for (const detail of getEncounterDetails(majorEncounter)){
+                    body += `* ${detail}\n`;
+                }
+            } else {
+                body += `## Major Encounter: none\n`;
             }
 
             document.getElementById("markdown").innerHTML = body;
@@ -338,6 +355,18 @@
     <button type="button" onclick="generate('forest')">forest</button>
     <button type="button" onclick="generate('hills')">hills</button>
     <button type="button" onclick="generate('mountain')">mountain</button>
+    &nbsp;
+    <label for="select_modifier">Modifiers</label>
+    <select name="modifier" id="select_modifier">
+        <option value="-0.1">Arctic: -10%</option>
+        <option value="-0.05">Sub-arctic: -5%</option>
+        <option value="0" selected="selected">Temperate: +0%</option>
+        <option value="0.05">Sub-tropical: +5%</option>
+        <option value="0.1">Tropical: +10%</option>
+    </select>
+    &nbsp;
+    <label for="input_enforce">Enforce Major Encounter</label>
+    <input type="checkbox" name="enforce" id="input_enforce"/>
     <hr/>
     <pre id="markdown"></pre>
     <hr/>
