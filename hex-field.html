@@ -29,16 +29,10 @@
             } while (1);
         }
 
-        function getLink(x, y) {
-            const x_pad = ('000' + x).slice(-3);
-            const y_pad = ('000' + y).slice(-3);
-            return `[${x_pad}-${y_pad}](../${x_pad}-${y_pad}/main.md)`;
-        }
-
         function getTerrainText(obj){
             return Object.entries(obj)
                 .sort(([,a],[,b]) => b-a)
-                .reduce((r, [k, v]) => ( (r ? r + ', ' : '') + `${[k]} (${v})`), '');
+               // .reduce((r, [k, v]) => ( (r ? r + ', ' : '') + `${[k]} (${v})`), '');
         }
 
         function getHexTerrains(type){
@@ -113,7 +107,7 @@
             const levels = implodingDice(6);
             details.push(`${levels} ` + 'levels/sections');
             for (let i=1;i<=levels;i++){
-                details.push(`${i} level/section: ${implodingDice(12)} rooms`);
+                details.push(`${i}. level/section: ${implodingDice(12)} rooms`);
             }
             details.push(`ruination: ${['sacked', 'plague', 'earthquake', 'curse', 'flood', 'angry gods', 'infestation', 'bad magic', 'tech gone wrong', 'self destruction'].random()}`);
             let interest = ['plunder', 'artefact/relic', 'bounty hunt', 'recovery', 'rescue', 'recon/intel', 'portal/gate', 'restoration', 'rare item', 'search & destroy'].random();
@@ -302,29 +296,19 @@
             return[];
         }
 
-        function generate() {
-            const x = parseInt(document.getElementById("x-coord").value);
-            const y = parseInt(document.getElementById("y-coord").value);
-            const type = document.getElementById("primaryType").value;
-            const offset = x % 2 === 0 ? 0 : -1;
+        function generate(type) {
+            body = `# Hex Field: ${type}\n`;
 
-            let body = '# Surrounding\n';
-            body += '|   |   |   |\n|---|---|---|\n';
-            body += '|   | '+ getLink(x, y-1) +' |   |\n';
-            body += '| '+ getLink(x-1, y + offset) +' |   | '+ getLink(x+1, y + offset) +' |\n';
-            body += '| '+ getLink(x-1, y + offset + 1) +' |   | '+ getLink(x+1, y + offset + 1) +' |\n';
-            body += '|   | '+ getLink(x, y+1) +' |   |\n';
+            body += `## Terrain\n`;
+            for (const terrain of getHexTerrains(type)){
+                body += `* ${terrain[0]} (${terrain[1]})\n`;
+            }
 
-            body += `\n![hexmap](hexmap.png)\n\n`
-
-            body += '# Terrain\n';
-            body += '* ' + getHexTerrains(type) + '\n';
-
+            body += `\n`;
             const majorEncounter = ['settlement', 'fortress', 'religious order', 'ruin', 'monster lair', 'natural phenomenon'].random();
-
-            body += `* Major Encounter: ${majorEncounter}\n`;
+            body += `## Major Encounter: ${majorEncounter}\n`;
             for (const detail of getEncounterDetails(majorEncounter)){
-                body += `  * ${detail}\n`;
+                body += `* ${detail}\n`;
             }
 
             document.getElementById("markdown").innerHTML = body;
@@ -340,32 +324,24 @@
     </style>
 </head>
 <body>
-<h1>Hex Field Generator</h1>
-<br/>
-All information and tables are taken from The Welsh Piper: <a href="https://welshpiper.com/hex-based-campaign-design-part-1/">source</a>
-<br/>
-<hr/>
-<form>
-    <label for="x-coord">X-Coordinate</label>
-    <input type="text" id="x-coord" value="001"/>
-    <label for="y-coord">Y-Coordinate</label>
-    <input type="text" id="y-coord" value="001"/>
-    <label for="primaryType">Main Terrain Type</label>
-    <select name="primaryType" id="primaryType">
-        <option value="water">Water</option>
-        <option value="swamp">Swamp</option>
-        <option value="desert">Dessert</option>
-        <option value="plains">Plains</option>
-        <option value="forest">Forest</option>
-        <option value="hills">Hills</option>
-        <option value="mountain">Mountains</option>
-    </select>
-    <button type="button" onclick="generate()">generate</button>
-</form>
-<hr/>
-<pre id="markdown"></pre>
-<hr/>
-<div id="preview"></div>
+    <h1>Hex Field Generator</h1>
+    <br/>
+    All information and tables are taken from The Welsh Piper: <a href="https://welshpiper.com/hex-based-campaign-design-part-1/">source</a>
+    <br/>
+    <br/>
+    <hr/>
+    <label>Generate</label>
+    <button type="button" onclick="generate('water')">water</button>
+    <button type="button" onclick="generate('swamp')">swamp</button>
+    <button type="button" onclick="generate('desert')">desert</button>
+    <button type="button" onclick="generate('plains')">plains</button>
+    <button type="button" onclick="generate('forest')">forest</button>
+    <button type="button" onclick="generate('hills')">hills</button>
+    <button type="button" onclick="generate('mountain')">mountain</button>
+    <hr/>
+    <pre id="markdown"></pre>
+    <hr/>
+    <div id="preview"></div>
 
 </body>
 </html>

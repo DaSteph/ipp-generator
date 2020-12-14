@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<head>
+    <title>Hex Field Generator</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+
+        function getLink(x, y) {
+            const x_pad = ('000' + x).slice(-3);
+            const y_pad = ('000' + y).slice(-3);
+            return `[${x_pad}-${y_pad}](../${x_pad}-${y_pad}/main.md)`;
+        }
+
+        function generate() {
+            const x = parseInt(document.getElementById("x-coord").value);
+            const y = parseInt(document.getElementById("y-coord").value);
+            const offset = x % 2 === 0 ? 0 : -1;
+
+            let body = '## Surrounding\n';
+            body += '|   |   |   |\n|---|---|---|\n';
+            body += '|   | '+ getLink(x, y-1) +' |   |\n';
+            body += '| '+ getLink(x-1, y + offset) +' |   | '+ getLink(x+1, y + offset) +' |\n';
+            body += '| '+ getLink(x-1, y + offset + 1) +' |   | '+ getLink(x+1, y + offset + 1) +' |\n';
+            body += '|   | '+ getLink(x, y+1) +' |   |\n';
+
+            body += `\n![hexmap](hexmap.png)\n\n`
+
+            document.getElementById("markdown").innerHTML = body;
+            document.getElementById('preview').innerHTML = marked(body);
+        }
+    </script>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            text-align: center;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+<h1>Hex Field Generator</h1>
+<br/>
+All information and tables are taken from The Welsh Piper: <a href="https://welshpiper.com/hex-based-campaign-design-part-1/">source</a>
+<br/>
+<hr/>
+<form>
+    <label for="x-coord">X-Coordinate</label>
+    <input type="text" id="x-coord" value="001"/>
+    <label for="y-coord">Y-Coordinate</label>
+    <input type="text" id="y-coord" value="001"/>
+    <button type="button" onclick="generate()">generate</button>
+</form>
+<hr/>
+<pre id="markdown"></pre>
+<hr/>
+<div id="preview"></div>
+
+</body>
+</html>
