@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<head>
+    <title>Markdown Template Generator</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        Array.prototype.random = function () {
+            return this[Math.floor((Math.random()*this.length))];
+        }
+
+        function roll(diceType, number = 1)
+        {
+            let result = 0;
+            for (let i=0; i<number; i++){
+                result += Math.ceil(Math.random()*diceType);
+            }
+            return result;
+        }
+
+        function implodingDice(diceType){
+            const marker = roll(diceType);
+            let result = marker;
+            do {
+                let rolled = roll(diceType);
+                if (rolled < marker){
+                    result += rolled;
+                } else {
+                    return result;
+                }
+            } while (1);
+        }
+
+        function getLink(x, y) {
+            const x_pad = ('000' + x).slice(-3);
+            const y_pad = ('000' + y).slice(-3);
+            return `[${x_pad}-${y_pad}](../${x_pad}-${y_pad}/main.md)`;
+        }
+
+        function getTerrainText(obj){
+            return Object.entries(obj)
+                .sort(([,a],[,b]) => b-a)
+                .reduce((r, [k, v]) => ( (r ? r + ', ' : '') + `${[k]} (${v})`), '');
+        }
+
+        function getHexTerrains(type){
+            let terrains = {};
+            switch (type) {
+                case 'water':
+                    terrains = {'water': 9, 'plains/beach': 6};
+                    for (let i=0; i<3; i++){
+                        let t = ['light forest', 'light forest', 'forest'].random();
+                        terrains[t] = 1 + (terrains[t] ? terrains[t] : 0);
+                    }
+                    break;
+                case 'swamp':
+                    terrains = {'swamp': 9, 'plains': 6, 'forest': 3};
+                    break;
+                case 'desert':
+                    terrains = {'desert': 9, 'plains': 3};
+                    for (let i=0; i<6; i++) {
+                        let t = ['hills', 'hills', 'rocky desert or high sand dunes'].random();
+                        terrains[t] = 1 + (terrains[t] ? terrains[t] : 0);
+                    }
+                    break;
+                case 'plains':
+                    terrains = {'plains/farmland': 9, 'forest': 6, 'hills': 3};
+                    break;
+                case 'forest':
+                    terrains = {'plains': 6};
+                    for (let i=0; i<9; i++) {
+                        let t = ['forest', 'forest', 'dense forest'].random();
+                        terrains[t] = 1 + (terrains[t] ? terrains[t] : 0);
+                    }
+                    for (let i=0; i<3; i++) {
+                        let t = ['hills', 'forested hills', 'forested hills'].random();
+                        terrains[t] = 1 + (terrains[t] ? terrains[t] : 0);
+                    }
+                    break;
+                case 'hills':
+                    terrains = {'plains': 3};
+                    for (let i=0; i<9; i++) {
+                        let t = ['hills', 'hills', 'hills', 'hills', 'canyon or fissure'].random();
+                        terrains[t] = 1 + (terrains[t] ? terrains[t] : 0);
+                    }
+                    for (let i=0; i<6; i++) {
+                        let t = ['hills', 'hills', 'hills', 'pass', 'pass'].random();
+                        terrains[t] = 1 + (terrains[t] ? terrains[t] : 0);
+                    }
+                    break;
+                case 'mountain':
+                    terrains = {'hills': 6};
+                    for (let i=0; i<9; i++) {
+                        let t = ['mountain', 'mountain', 'mountain', 'mountain', 'mountain',
+                            'mountain', 'mountain', 'mountain', 'mountain', 'mountain',
+                            'mountain', 'mountain', 'mountain', 'dominating peak', 'dominating peak',
+                            'dominating peak', 'dominating peak', 'mountain pass', 'mountain pass', 'volcano'
+                        ].random();
+                        terrains[t] = 1 + (terrains[t] ? terrains[t] : 0);
+                    }
+                    for (let i=0; i<3; i++) {
+                        let t = ['forest', 'forest', 'forested mountains'].random();
+                        terrains[t] = 1 + (terrains[t] ? terrains[t] : 0);
+                    }
+                    break;
+            }
+            return getTerrainText(terrains);
+        }
+
+        function getRuinDetails()
+        {
+            const details = [];
+            details.push(['abandoned disease', 'abandoned attack', 'abandoned migration'].random());
+            details.push('type: ' + ['village', 'town', 'city', 'tower', 'keep', 'castle', 'tomb', 'temple', 'abbey', 'chantry'].random());
+            const levels = implodingDice(6);
+            details.push(`${levels} ` + 'levels/sections');
+            for (let i=1;i<=levels;i++){
+                details.push(`${i} level/section: ${implodingDice(12)} rooms`);
+            }
+            details.push(`ruination: ${['sacked', 'plague', 'earthquake', 'curse', 'flood', 'angry gods', 'infestation', 'bad magic', 'tech gone wrong', 'self destruction'].random()}`);
+            let interest = ['plunder', 'artefact/relic', 'bounty hunt', 'recovery', 'rescue', 'recon/intel', 'portal/gate', 'restoration', 'rare item', 'search & destroy'].random();
+            if (interest === 'recovery'){
+                interest += ' ' + ['heirloom', 'noble person', 'lost secrets', 'remains', ' birth right', 'ruin itself'].random();
+            }
+            if (interest === 'rescue'){
+                interest += ' ' + ['mentor', 'patron', 'ally', 'prisoner', 'ward', 'nemesis'].random();
+            }
+            details.push(`interest: ${interest}`);
+            let rolls = 1;
+            let rolled = 0;
+            do {
+                rolled = roll(10);
+                if (rolled >= 9){
+                    rolls += rolled - 8;
+                }
+            } while (rolled>= 9);
+            for (let i=1;i<=rolls;i++){
+                let line = `majordomo: ${['fighter', 'cleric', 'thief', 'mage', 'demon', 'humanoid', 'dragon', 'alien'].random()} - minions: `;
+                for (let j=1;j<=2;j++){
+                    if (j > 1){
+                        line += ' & ';
+                    }
+                    let minion = ['bandits', 'humanoids', 'imps', 'sub-men', 'constructs', 'lowlifes', 'animals', 'hybrids', 'undead', 'weird things'].random();
+                    if (minion === 'lowlifes'){
+                        minion = ['fungal', 'insects/spiders', 'insects/spiders', 'insects/spiders', 'worms', 'plant'].random();
+                    }
+                    line += minion;
+                }
+                details.push(line);
+            }
+
+            return details;
+        }
+
+        function getSettlementDetails(){
+            const details = [];
+            const rolled = roll(8);
+
+            let settlementType = '';
+            let pop = 0;
+            switch (rolled){
+                case 1:
+                case 2:
+                case 3:
+                    settlementType = 'town';
+                    pop = roll(6, 3) * 100;
+                    break;
+                case 4:
+                case 5:
+                    settlementType = 'city';
+                    pop = roll(4, 3) * 1000;
+                    break;
+                case 6:
+                    settlementType = 'free city';
+                    pop = roll(4, 3) * 1000;
+                    break;
+                case 7:
+                    settlementType = 'metropolis';
+                    pop = roll(6, 3) * 3000 + 6000;
+                    break;
+                case 8:
+                    settlementType = 'city state';
+                    pop = roll(6, 3) * 3000 + 6000;
+                    break;
+            }
+            const walled = [3, 5, 6, 7, 8].includes(rolled) ? 'walled' : 'not walled';
+            details.push(`settlementType: ${settlementType} (${walled})`);
+
+            const rulers = ['nobility', 'nobility', 'criminals', 'spell casters', 'military', 'merchants', 'scholars', 'secret cult'].random();
+            const rulerGroup = ['men', 'men', 'men', 'women', 'mixed gender', 'mixed gender'].random();
+            details.push(`ruled by: ${rulers} (${rulerGroup})`);
+
+            const government = ['autocracy', 'bureaucracy', 'monarchy', 'oligarchy', 'syndicracy', 'theocracy', 'dictatorship', 'confederacy'].random();
+            details.push(`government: ${government}`);
+
+            const alignment = ['lawful', 'lawful', 'neutral', 'neutral', 'neutral', 'chaotic'].random();
+            details.push(`alignment: ${alignment}`);
+
+            const commerce = ['food', 'textiles', 'services', 'slaves', 'arms', 'minerals', 'livestock', 'unique resource'].random();
+            details.push(`commerce: ${commerce}`);
+
+            const groupTraits = roll(4);
+            for (let i=0; i<groupTraits; i++){
+                const group = [
+                    `evolutionary trace of: ${['some monster', 'plant', 'planar creature', 'variant humanoid', 'some sea creature', 'off-world beings'].random()}`,
+                    `dwells within ${['caves', 'stone fortifications', 'buildings propped up on stilts', 'trees', 'organic structures', 'restrictive abodes'].random()}`,
+                    `physically ${['beautiful', 'adapted to water', 'odd height', 'unusual hair/eye colour', 'potent', 'inverted joint'].random()}`,
+                    `mentally  ${['two steps ahead', 'erudite', 'empathetic', 'unable to grasp specific concept', 'naive', 'ambidextrous'].random()}`,
+                    `considered experts in ${['herb lore', 'science', 'engineering', 'magic', 'torture', 'warfare'].random()}`,
+                    `widely rumoured to be ${['telepathic', 'asexual', 'cannibalistic', 'vampiric', 'incestuous', 'off-worlders'].random()}`,
+                    `architecture reminiscent of ${['skeletons', 'insects', 'plants & trees', 'reptiles', 'odd geometry', 'water'].random()}`,
+                    `artistically prone toward ${['sculpture', 'painting', 'literature', 'performance', 'pornography', 'architecture'].random()}`,
+                    `fondness for ${['horses', 'insects', 'avians', 'felines', 'canines', 'reptiles'].random()}`,
+                    `diplomacy characterised by ${['force', 'cold logic', 'capitulation', 'backroom deals', 'intimidation', 'betrayal'].random()}`,
+                    `stereotyped as ${['sea-farers', 'thieves', 'shrewd traders', 'drunks', 'backward', 'lecherous'].random()}`,
+                    `social perk ${['polite', 'tolerant', 'hospitality', 'merciful', 'honest', 'wise'].random()}`,
+                    `social flaw ${['proud', 'quarrelsome', 'vulgar', 'vindictive', 'austere', 'garrulous'].random()}`,
+                    `adornment ${['garish/sombre colours', 'wispy garments', 'masks', 'shiny baubles', 'body art', 'exotic hides & furs'].random()}`,
+                    `strongly influenced by ${['colours', 'astrology', 'aloof whims', 'reproductive need', 'base urges', 'weather patterns'].random()}`,
+                    `historical figure was a ${['saint', 'martyr', 'traitor', 'lowly beggar', 'lunatic', 'child'].random()}`,
+                    `affinity for ${['fire', 'water', 'air', 'earth', 'precious metals', 'gemstones'].random()}`,
+                    `aversion to ${['magic', 'water', 'plants', 'animals', 'metal', 'blood'].random()}`,
+                    `incapable of ${['deceit', 'affection', 'metaphor', 'violence', 'forgiveness', 'sarcasm'].random()}`,
+                    `strange custom: ${[
+                        `birth - ${[
+                            'Children born at certain moon phase are abandoned',
+                            `Children are named after the first ${['animal', 'relative'].random()} seen by the father following birth`,
+                            `Children born during an eclipse are afforded special status`,
+                            `Bastards are orphaned to a ${['fighting order', 'fighting order', 'monastery', 'monastery', 'urchin’s guild', 'merchant navy'].random()}`,
+                            `Children are taught to ${['fight', 'fight', 'ride', 'ride', 'sneak', 'swim'].random()} as soon as they can walk`,
+                            `Couples cannot have more than three ${['offspring', 'boys', 'girls'].random()}`,
+                        ].random()}`,
+                        `rite of passage - ${[
+                            `Receives vision of his blood enemy`,
+                            `Must slay totem animal during sacred hunt`,
+                            `Must complete scavenger hunt in nearest city`,
+                            `Must earn a “mannengild” to pay for adult status`,
+                            `Must choose a bride/get engaged`,
+                            `Must attract a companion animal/familiar`
+                        ].random()}`,
+                        `marriage - ${[
+                            `Divorce permitted, but belongings revert to husband’s chief rival`,
+                            `Husband may take multiple wives`,
+                            `Consummation requires witness(es) and must occur within 24 hours`,
+                            `Ceremony must occur at an historical site`,
+                            `Local lord may deflower the bride (i.e., so-called prima nocta)`,
+                            `Couple must abstain from some vice while engaged`
+                        ].random()}`,
+                        `death - ${[
+                            `Dead are (ritually) consumed by ${['wild animals', 'wild animals', 'carrion birds', 'decedent’s totem animal', 'carnivorous plant', 'relatives'].random()}`,
+                            `Dead are magically ${['disintegrated', 'disintegrated', 'sent to astral plane', 'shrunken', 'petrified', 'sunk into the earth'].random()}`,
+                            `Dead are ${['mummified', 'thrown in a swamp', 'interred at place of birth', 'consigned to the waters', 'cremated on a pyre', 'left on a mountain peak'].random()}`,
+                            `Dead ancestors are worshiped as family idols`,
+                            `Names of the dead may never be spoken`,
+                            `Body parts of the deceased are ${['made into garments/jewellery', 'made into garments/jewellery', 'preserved in the home', 'preserved in the home', 'made into unguents', 'strewn about the fields'].random()}`
+                        ].random()}`,
+                        `rulership - ${[
+                            `Ruler guided by parliament of ${['the learned', 'astrologers', 'sorcerers', 'savants', 'supplicants', 'past rulers’ spirits'].random()}`,
+                            `Rulers must be literate and demonstrate mastery of ${['science', 'math', 'verse'].random()}`,
+                            `Rulers required to pass ${['mental test', 'show of charity', 'moral dilemma', 'physical challenge', 'logical paradox', 'magical feat'].random()}`,
+                            `Rulers ritually executed/assassinated upon removal from office`,
+                            `Contenders must best current ruler in ${['single combat', 'single combat', 'ritual quest', 'labyrinth', 'wilderness survival', 'withstanding poison'].random()}`,
+                            `Ruler is rendered into a ${['shapeshifter', 'shapeshifter', 'eunuch', 'undead creature', 'drug addict', 'sequestered savant'].random()}`
+                        ].random()}`,
+                        `martial - ${[
+                            `Victors eat the ${['liver', 'eyes', 'heart', 'brain', 'flesh', 'lungs'].random()} of foes slain in single combat`,
+                            `Warriors tattoo the name of their blood foe on their sword arm`,
+                            `Warriors are forbidden to use ${['missile weapons', 'missile weapons', 'shields', 'shields', 'two-handed weapons', 'mounts'].random()}`,
+                            `Upon his death, a warrior’s deeds are carved into a stone pillar`,
+                            `Warriors ${['shave their bodies', 'add body art for each battle', 'practice self-mutilation'].random()}`,
+                            `Warriors wear the ${['ears', 'eyes', 'scalp', 'fingers', 'genitals', 'teeth'].random()} of slain foes`
+                        ].random()}`,
+                        `gender roles - ${[
+                            `Women chose their husband`,
+                            `Wife may take multiple husbands`,
+                            `Women are ${['officers of the court', 'warriors', 'clergy', 'hunters', 'sorcerers', 'diplomats'].random()}`,
+                            `Family line traced through mother`,
+                            `Only women may ${['smoke', 'be literate', 'file legal suits', 'bear shield', 'distill alcohol', 'handle money'].random()}`,
+                            `Women must cover ${['face', 'face', 'arms', 'arms', 'legs', 'ankles'].random()} in public`
+                        ].random()}`,
+                        `law & justice - ${[
+                            `Criminals are ${['formed into military units', 'indentured to wealthy families', 'forced to perform deadly work'].random()}`,
+                            `Prohibition of ${['alcohol', 'meat', 'prostitution', 'long hair', 'tea', 'games of chance'].random()}`,
+                            `Innocence of the accused determined by ${['single combat', 'single combat', 'physical sport', 'physical sport', 'ordeal', 'divination'].random()}`,
+                            `It is legal to commit ${['murder', 'murder', 'witchcraft', 'rape', 'theft', 'usury'].random()}`,
+                            `Criminals executed by ${['ravenous insects', 'gladiatorial combat', 'starvation', 'fatal parasite', 'flaying', 'planar banishment'].random()}`,
+                            `Guilty verdicts overturned for ${['money', 'money', 'completion of a quest', 'assassinating a rival of the court', 'relinquishing a slave to serve sentence', 'self-mutilation'].random()}`
+                        ].random()}`,
+                    ].random()}`,
+                ].random();
+                details.push(`group - ${group}`);
+            }
+
+            return details;
+        }
+
+        function getEncounterDetails(majorEncounter){
+            switch (majorEncounter){
+                case 'ruin':
+                    return getRuinDetails();
+                case 'settlement':
+                    return getSettlementDetails();
+            }
+            return[];
+        }
+
+        function generate() {
+            const x = parseInt(document.getElementById("x-coord").value);
+            const y = parseInt(document.getElementById("y-coord").value);
+            const type = document.getElementById("primaryType").value;
+            const offset = x % 2 === 0 ? 0 : -1;
+
+            let body = '# Surrounding\n';
+            body += '|   |   |   |\n|---|---|---|\n';
+            body += '|   | '+ getLink(x, y-1) +' |   |\n';
+            body += '| '+ getLink(x-1, y + offset) +' |   | '+ getLink(x+1, y + offset) +' |\n';
+            body += '| '+ getLink(x-1, y + offset + 1) +' |   | '+ getLink(x+1, y + offset + 1) +' |\n';
+            body += '|   | '+ getLink(x, y+1) +' |   |\n';
+
+            body += `\n![hexmap](hexmap.png)\n\n`
+
+            body += '# Terrain\n';
+            body += '* ' + getHexTerrains(type) + '\n';
+
+            const majorEncounter = ['settlement', 'fortress', 'religious order', 'ruin', 'monster lair', 'natural phenomenon'].random();
+
+            body += `* Major Encounter: ${majorEncounter}\n`;
+            for (const detail of getEncounterDetails(majorEncounter)){
+                body += `  * ${detail}\n`;
+            }
+
+            document.getElementById("markdown").innerHTML = body;
+            document.getElementById('preview').innerHTML = marked(body);
+        }
+    </script>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            text-align: center;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+<h1>Markdown Generator f&uuml;r die Verlassene K&uuml;ste</h1>
+<a href="https://welshpiper.com/hex-based-campaign-design-part-2/">source</a>
+<form>
+    <label for="x-coord">X-Koordinate</label>
+    <input type="text" id="x-coord" value="001"/>
+    <label for="y-coord">Y-Koordinate</label>
+    <input type="text" id="y-coord" value="001"/>
+    <label for="primaryType">Gel&auml;ndetyp</label>
+    <select name="primaryType" id="primaryType">
+        <option value="water">Wasser</option>
+        <option value="swamp">Sumpf</option>
+        <option value="desert">W&uuml;ste</option>
+        <option value="plains">Ebene</option>
+        <option value="forest">Wald</option>
+        <option value="hills">H&uuml;gel</option>
+        <option value="mountain">Berge</option>
+    </select>
+    <button type="button" onclick="generate()">generieren</button>
+</form>
+
+
+<hr/>
+<pre id="markdown"></pre>
+<hr/>
+<div id="preview"></div>
+
+</body>
+</html>
