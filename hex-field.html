@@ -105,10 +105,12 @@
             details.push(['abandoned disease', 'abandoned attack', 'abandoned migration'].random());
             details.push('type: ' + ['village', 'town', 'city', 'tower', 'keep', 'castle', 'tomb', 'temple', 'abbey', 'chantry'].random());
             const levels = implodingDice(6);
-            details.push(`${levels} ` + 'levels/sections');
-            for (let i=1;i<=levels;i++){
-                details.push(`${i}. level/section: ${implodingDice(12)} rooms`);
-            }
+
+
+            let text = `${levels} ` + 'levels/sections - number of rooms: ';
+             text += Array.from({length: levels}, (_, i) => i + 1)
+                .map(i => `${i}: ${implodingDice(12)}`).join(' / ');
+            details.push(text);
             details.push(`ruination: ${['sacked', 'plague', 'earthquake', 'curse', 'flood', 'angry gods', 'infestation', 'bad magic', 'tech gone wrong', 'self destruction'].random()}`);
             let interest = ['plunder', 'artefact/relic', 'bounty hunt', 'recovery', 'rescue', 'recon/intel', 'portal/gate', 'restoration', 'rare item', 'search & destroy'].random();
             if (interest === 'recovery'){
@@ -286,20 +288,189 @@
             return details;
         }
 
+        function getFortressDetails(){
+            const details = [];
+            const buildingFunc = function (prefix, floorOffset, guardDiceSize, guardOffset){
+                const floors = roll(4) + floorOffset;
+                let text = `${prefix}with ${floors} floors - number of guards: `;
+                text += Array.from({length: floors}, (_, i) => i + 1)
+                    .map(i => `${i}: ${roll(guardDiceSize) + guardOffset}`).join(' / ');
+                return text;
+            }
+
+            switch (roll(6)){
+                case 1:
+                case 2:
+                case 3:
+                    details.push(buildingFunc('type: tower ', 2, 4, 0));
+                    break;
+                case 4:
+                case 5:
+                    details.push(buildingFunc('type: keep ', 3, 6, 2));
+                    break;
+                case 6:
+                    const towers = roll(4, 3);
+                    details.push(`type: castle: a keep surrounded with ${towers} towers`);
+                    details.push(buildingFunc('main keep ', 3, 8, 0));
+                    for (let i=1;i<=towers;i++){
+                        details.push(buildingFunc(`${i}. tower `, 2, 8, 0));
+                    }
+
+                    break;
+            }
+
+            const lord = ['Fighter', 'Fighter', 'Fighter', 'Noble', 'Noble', 'Noble', 'Thief', 'Mage', 'Mage', 'Usurper'].random();
+            const lordLevel = roll(6) + 6;
+            details.push(`Lord: ${lord} of level ${lordLevel}`);
+            const alignment = ['Lawful', 'Neutral', 'Chaotic'].random();
+            details.push(`Alignment: ${alignment}`);
+            const what_protected = ['Village', 'Village', 'Town', 'Town', 'Resource', 'Border', 'Border', 'Dungeon', 'Ruin / Artefact', 'Secret'].random();
+            details.push(`Protected: ${what_protected}`);
+            const guards = ['Bandits', 'Knights', 'Men-at-arms', 'Men-at-arms', 'Men-at-arms', 'Dervishes', 'Humanoids', 'Demi-humans', 'Automatons', 'Barbarians'].random();
+            details.push(`Guards: ${guards}`);
+            const majordomo  = ['Giant', 'Dragon', 'Fighter', 'Fighter', 'Thief', 'Humanoids', 'Mage', 'Demon', 'Elemental', 'Naga'].random();
+            const majordomoLevel = roll(6) + 3;
+            details.push(`Majordomo : ${majordomo} of level ${majordomoLevel}`);
+
+            // TODO random noble houses generator?
+
+            return details;
+        }
+
+        function getReligiousOrderDetails(){
+            const details = [];
+
+            const type = ['Holy Site', 'Hermitage', 'Shrine', 'Mausoleum', 'Temple', 'Priory', 'Abbey', 'Military Order', 'Chantry', 'Glebe'].random();
+            switch (type){
+                case 'Priory':
+                case 'Abbey':
+                    const houses = ['monks', 'monks', 'nuns'].random();
+                    details.push(`Type : ${type} which houses ${houses}`);
+                    break;
+                case 'Military Order':
+                    const housed = ['fortified manse', 'fortified manse', 'fortified manse', 'tower', 'tower', 'keep', 'keep', 'castle'];
+                    details.push(`Type : ${type} housed in ${housed}`);
+                    break;
+                case 'Glebe':
+                    const supPop = roll(6, 5) * 10;
+                    details.push(`Type : ${type} with support population ${supPop}`);
+                    break;
+                default:
+                    details.push(`Type : ${type}`);
+                    break;
+            }
+            const clergyGarrisonRoll = roll(10);
+            const clergy = [roll(6) - 5, roll(6) - 3, roll(6), roll(6), roll(6, 2), roll(6, 3), roll(6, 4), roll(6, 2), roll(6, 5), roll(6, 6)][clergyGarrisonRoll-1];
+            const garrison = [roll(4) - 3, roll(4) - 2, roll(4), roll(4), roll(4, 2), roll(4, 2), roll(4, 3), roll(4, 10), roll(4, 5), roll(4, 6)][clergyGarrisonRoll-1];
+            const ranking = ['male', 'male', 'female'].random();
+            const clergyLevel = roll(6, 2);
+            details.push(`Clergy: ${clergy} (ranking: ${ranking}) with level ${clergyLevel}`);
+            details.push(`Garrison : ${garrison} at level 0 men-at-arms (plus 1 officer per 8 guards)`);
+
+            const dedication = ['Saint', 'Martyr', 'Hero / Heroine', 'Angel', 'Demon / Devil', 'Demigod', 'Lesser God', 'Greater God'].random();
+            details.push(`Dedication: ${dedication}`);
+            const spiritualFocus = ['Healing', 'Divination', 'Ancient Teachings', 'Hedonism', 'Technology', 'Naturalism', 'Dark Secrets', 'Jihad', 'Dimensions', 'Immortality'].random();
+            details.push(`Focus: ${spiritualFocus}`);
+            const alignment = ['Lawful', 'Lawful', 'Neutral', 'Neutral', 'Neutral', 'Chaotic'].random();
+            details.push(`Alignment: ${alignment}`);
+
+            const dispositionRoll = roll(8);
+            const exposure = ['Secret', 'Secret', 'Secret', 'Secret', 'Public', 'Public', 'Public', 'Public'][dispositionRoll-1];
+            details.push(`Exposure: ${exposure}`);
+            const parentChurchRel = ['Aligned', 'Aligned', 'Heretical', 'Heretical', 'Aligned', 'Aligned', 'Heretical', 'Heretical'][dispositionRoll-1];
+            details.push(`Relationship with parent church: ${parentChurchRel}`);
+            const status = ['Mainstream', 'Cult', 'Mainstream', 'Cult', 'Mainstream', 'Cult', 'Mainstream', 'Cult'][dispositionRoll-1];
+            details.push(`Status: ${status}`);
+
+            return details;
+        }
+
+        function getMonsterLairDetails() {
+            const details = [];
+
+            const monsterTab = ['Dragon', 'Planar', 'Humanoid, weak', 'Humanoid, strong', 'Deep Horror', 'Hive Minded', 'Fey', 'Alien'];
+            const monsterRoll = roll(10);
+            const rolls = Math.max(1, monsterRoll-7);
+
+            if (monsterRoll < 9){
+                details.push(`Monster: ${monsterTab[monsterRoll-1]}`);
+            } else {
+                for (let i=0; i<(monsterRoll-7); i++) {
+                    details.push(`Monster: ${monsterTab.random()}`);
+                }
+                const relation = ['allied', 'cooperative', 'oppressive/enslaved', 'neutral', 'competitive', 'at war'].random();
+                details.push(`Relation between Monsters: ${relation}`);
+            }
+            const populationDie = ['1d4 (= Sparse)', '1d6 (= Normal)', '2d6 (= Ample)', '3d6 (= Abundant)', '4d6 (= Idyllic)'].random();
+            details.push(`Minimum population: [(20 - monster's level) x ${populationDie}]`);
+            const activity = ['Spying', 'Raiding', 'Expanding', 'Searching', 'Organising', 'Venerating', 'Guarding', 'Activating', 'Serving', 'Summoning'].random();
+            details.push(`Activity: ${activity}`);
+            const pets = ['Bugs', 'Bugs', 'Animals', 'Animals', 'Animals', 'Mushrooms', 'Plants', 'Plants', 'Hybrids', 'Weird Things'].random();
+            details.push(`Pets: ${pets} - if 1d20 above Monster level`);
+            const feature = ['Completely Normal', 'Geothermal Activity', 'Natural Springs', 'Wild Magic', 'Unnaturally Light / Dark', 'Enchanted Fountain', 'Portal / Gate', 'Ancient Graveyard', 'Partially Submerged', 'Rare / Magical Resource'].random();
+            details.push(`Feature: ${feature}`);
+
+            return details;
+        }
+
+        function getNaturalPhenomenonDetails() {
+            const details = [];
+
+            const feature = [['unseasonal', 'intense'].random() + ' weather', 'geothermal activity', 'geothermal activity', 'peculiar growth', 'peculiar blight', ['oasis', 'grove'].random()].random();
+            details.push(`Feature: ${feature}`);
+
+            const aspectTbl = [
+                ['Air - breathable air', 'Air - wind', 'Air - sky', 'Air - cyclone'],
+                ['Earth - volcano (dormant)', 'Earth - formations', 'Earth - seismic', 'Earth - canyon'],
+                ['Fire - volcano (active)', 'Fire - natural vents', 'Fire - lava', 'Fire - open flame'],
+                ['Water - geyser', 'Water - spring', 'Water - whirlpool', 'Water - waterfall'],
+                'Elemental Combo', 'Plants', 'Animals', 'Precipitation', 'Sunlight', 'Moonlight'];
+            let aspect = aspectTbl.random();
+            if (Array.isArray(aspect)){
+               aspect = aspect.random();
+            }
+            if (aspect === 'Elemental Combo'){
+                aspect = `Elemental Combo (${aspectTbl[roll(4) - 1].random()}) + (${aspectTbl[roll(4) - 1].random()}))`;
+            }
+            details.push(`Aspect: ${aspect}`);
+
+            const effect = [
+                'It Looks Totes Weird', 'Meh - No Big Deal',
+                'Attracts ' + ['Metal', 'Wood', ['High', 'Low'].random() + ' intelligence', 'Monster type', 'Alignment', 'Precious metal'].random(),
+                'Repels ' + ['Metal', 'Wood', ['High', 'Low'].random() + ' intelligence', 'Monster type', 'Alignment', 'Precious metal'].random(),
+                'Arcane Focus', 'Divine Focus',
+                'Mental Benefit of ' + ['Intelligence', 'Memory', 'Awareness', 'Personality', 'Sanity', 'Alignment'].random(),
+                'Mental Detriment of ' + ['Intelligence', 'Memory', 'Awareness', 'Personality', 'Sanity', 'Alignment'].random(),
+                'Physical Benefit of ' + ['Strength', 'Dexterity', 'Size', 'Age', 'Health', 'Appearance'].random(),
+                'Physical Detriment of ' + ['Strength', 'Dexterity', 'Size', 'Age', 'Health', 'Appearance'].random()
+            ].random();
+            details.push(`Effect: ${effect}`);
+
+            return details;
+        }
+
         function getEncounterDetails(majorEncounter){
             switch (majorEncounter){
-                case 'ruin':
-                    return getRuinDetails();
                 case 'settlement':
                     return getSettlementDetails();
+                case 'fortress':
+                    return getFortressDetails();
+                case 'ruin':
+                    return getRuinDetails();
+                case 'religious order':
+                    return getReligiousOrderDetails();
+                case 'monster lair':
+                    return getMonsterLairDetails();
+                case 'natural phenomenon':
+                    return getNaturalPhenomenonDetails();
             }
             return[];
         }
 
-        function doMajorEncounter(enforceMajorEncounter, type, probabilityOffset)
+        function doMajorEncounter(type, probabilityOffset)
         {
             const encounterProbability = {water: 0.1, swamp: 0.2, desert: 0.2, plains: 0.6, forest: 0.4, hills: 0.4, mountain: 0.2};
-            if (enforceMajorEncounter || !encounterProbability.hasOwnProperty(type)){
+            if (!encounterProbability.hasOwnProperty(type)){
                 return true;
             }
             const probability = encounterProbability[type] + probabilityOffset;
@@ -307,7 +478,6 @@
         }
 
         function generate(type) {
-            const enforceMajorEncounter = document.getElementById("input_enforce").checked;
             const probabilityOffset = parseFloat(document.getElementById("select_modifier").value);
 
             let body = `# Hex Field: ${type}\n`;
@@ -318,7 +488,7 @@
             }
 
             body += `\n`;
-            if (doMajorEncounter(enforceMajorEncounter, type, probabilityOffset)){
+            if (doMajorEncounter(type, probabilityOffset)){
                 const majorEncounter = ['settlement', 'fortress', 'religious order', 'ruin', 'monster lair', 'natural phenomenon'].random();
                 body += `## Major Encounter: ${majorEncounter}\n`;
                 for (const detail of getEncounterDetails(majorEncounter)){
@@ -363,10 +533,8 @@
         <option value="0" selected="selected">Temperate: +0%</option>
         <option value="0.05">Sub-tropical: +5%</option>
         <option value="0.1">Tropical: +10%</option>
+        <option value="1">Enforce Major Encounter: +100%</option>
     </select>
-    &nbsp;
-    <label for="input_enforce">Enforce Major Encounter</label>
-    <input type="checkbox" name="enforce" id="input_enforce"/>
     <hr/>
     <pre id="markdown"></pre>
     <hr/>
