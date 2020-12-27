@@ -477,8 +477,35 @@
             return Math.random() <= probability;
         }
 
+        function getMinorEncounter()
+        {
+            return [
+                'Settlement - a village or hamlet with a small to moderate population',
+                'Fort - a small fortified holding owned by a ' + ['noble', 'military leader', 'fighting order', 'adventurer'].random(),
+                'Ruin - the remains of a single structure whose original purpose was ' + ['tomb', 'tomb', 'holding', 'other structure', 'other structure', 'dwelling'].random(),
+                'Monster - the lair of a common or uncommon creature',
+                'Wandering Monster - creature type based on current habitat; creature is ' + ['establishing a lair', 'establishing a lair', 'scouting/foraging', 'scouting/foraging', 'scouting/foraging', 'lost'].random(),
+                'Camp, industrial - production facility for some natural resource, based on terrain (Water/fishery, Swamp/peat, Desert/oasis, Plains/farming/ranching, Forest/logging, Hills or Mountain/mining)',
+                'Camp, semi-permanent - a way-station for ' + ['trappers', 'trappers', 'hunters', 'hunters', 'drovers', 'messengers'].random(),
+                'Beacon - a long-range ' + (roll(5) === 1 ? 'magical ' : '') + 'signalling/communication device (lighthouse if on/near water) operated by ' + ['guild', 'guild', 'local lord', 'council of nearest settlement', 'council of nearest settlement', 'council of nearest settlement'].random(),
+                'Construction Site - a structure is being erected here ' + ['fortification', 'infrastructure', 'infrastructure', 'homestead', 'homestead', 'religious centre'].random(),
+                'Battlefield - the site of a major battle - ' + (roll(5) === 1 ? 'containing' : 'no') + ' salvageable gear - ' + (roll(10) === 1 ? 'haunted' : 'not haunted') + ' by the spirits of the slain',
+                'Isolated - the ' + (roll(5) <= 2 ? 'fortified ': '') +'dwelling of some outsider ' + ['hermit', 'mad hermit', 'oracle', 'retired adventurer', 'outlaw', 'homestead'].random(),
+                'Sacred Ground - a protected area, designated as a ' + ['burial grounds', 'burial grounds', 'burial grounds', 'consecrated area', 'consecrated area', 'hunting range'].random(),
+                'Crossing - a bridge, ford, or pass that is ' + ['in disrepair', 'serviceable', 'serviceable', ' toll is charged', ' toll is charged', ' toll is charged'].random(),
+                'Ancient Structure - a construction of antiquity of ' + ['a grave marker', 'a grave marker', 'a grave marker', 'an astrological construction', 'a pagan shrine', 'a pagan shrine'].random() + (roll(10) === 1 ? 'that possesses magical properties' : ''),
+                'Special Hazard - an environmental danger exists here - ' + ['poison', 'poison', 'disease', 'unstable ground', 'strong electromagnetic field', 'radiation'].random(),
+                'Treasure - a cache of valuables is rumoured to lie hidden here, but certainly not easy to obtain - ' + ['existing but guarded', 'existing but guarded', 'existing and unguarded', 'just a legend', 'just a legend'].random(),
+                'Contested - the area is fought over by 2 or more factions because of ' + ['valuable resources', 'valuable resources', 'abundant food', 'strategic location', 'strategic location', 'religious significance'].random(),
+                'Natural Resource - a valuable commodity is located here - ' + ['rare herbs', 'rare herbs', 'rare mineral (lodestone)', 'rare mineral (quicksilver)', 'meteoric steel', 'heavy water'].random(),
+                'Supernatural Feature - an unexplained effect or object exists here - ' + ['teleportation portal', 'teleportation portal', 'dimensional gate', 'anti-magic field', 'wild-magic field', 'wild-magic field'].random(),
+                'Gathering Place - a meeting place, relatively free from outside influence - ' + ['tribal moot', 'tribal moot', 'tribal moot', 'free trading post', 'free trading post', 'hospitaliers'].random(),
+            ].random();
+        }
+
         function generate(type) {
             const probabilityOffset = parseFloat(document.getElementById("select_modifier").value);
+            const minorEncounterHit = parseFloat(document.getElementById("select_minorEncounterHit").value);
 
             let body = `# Hex Field: ${type}\n`;
 
@@ -496,6 +523,26 @@
                 }
             } else {
                 body += `## Major Encounter: none\n`;
+            }
+
+            const minorEncounterDice = {water: 1, swamp: 2, desert: 2, plains: 6, forest: 4, hills: 4, mountain: 2};
+            let minorEncounters = 0;
+            if (minorEncounterDice.hasOwnProperty(type)){
+                for (let i = 1; i <= minorEncounterDice[type]; i++){
+                    if (roll(6) <= minorEncounterHit){
+                        minorEncounters++;
+                    }
+                }
+            }
+
+            if (minorEncounters < 1){
+                body += `\n## Minor Encounter: none\n`;
+            } else {
+                body += `\n## Minor Encounter\n`;
+                for (let i = 1; i <= minorEncounters; i++){
+                    const minorEncounter = getMinorEncounter();
+                    body += `* ${minorEncounter}\n`;
+                }
             }
 
             document.getElementById("markdown").innerHTML = body;
@@ -525,7 +572,6 @@
     <button type="button" onclick="generate('forest')">forest</button>
     <button type="button" onclick="generate('hills')">hills</button>
     <button type="button" onclick="generate('mountain')">mountain</button>
-    &nbsp;
     <label for="select_modifier">Modifiers</label>
     <select name="modifier" id="select_modifier">
         <option value="-0.1">Arctic: -10%</option>
@@ -534,6 +580,15 @@
         <option value="0.05">Sub-tropical: +5%</option>
         <option value="0.1">Tropical: +10%</option>
         <option value="1">Enforce Major Encounter: +100%</option>
+    </select>
+    <label for="select_minorEncounterHit">Minor Encounter Hit</label>
+    <select name="minorEncounterHit" id="select_minorEncounterHit">
+        <option value="1">1 - normal</option>
+        <option value="2">1-2</option>
+        <option value="3">1-3</option>
+        <option value="4">1-4</option>
+        <option value="5">1-5</option>
+        <option value="6">1-6</option>
     </select>
     <hr/>
     <pre id="markdown"></pre>
