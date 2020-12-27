@@ -390,7 +390,6 @@
 
             const monsterTab = ['Dragon', 'Planar', 'Humanoid, weak', 'Humanoid, strong', 'Deep Horror', 'Hive Minded', 'Fey', 'Alien'];
             const monsterRoll = roll(10);
-            const rolls = Math.max(1, monsterRoll-7);
 
             if (monsterRoll < 9){
                 details.push(`Monster: ${monsterTab[monsterRoll-1]}`);
