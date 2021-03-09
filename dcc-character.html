@@ -130,6 +130,14 @@
         function generate() {
             let details = [];
 
+            const professionData = getProfession();
+
+            details.push(`Beruf: ${professionData[0]}`);
+            details.push(`Waffenübung: ${professionData[1]}`);
+            details.push(`Handelsgüter: ${professionData[2]} und ${getEquipment()}`);
+
+            details.push('');
+
             const strength = roll(6, 3);
             const agility = roll(6, 3);
             const stamina = roll(6, 3);
@@ -160,14 +168,6 @@
             details.push('Willenskraftwurf +0');
             details.push(`Trefferpunkte: ${roll(4)}`);
             details.push('Erfahrung: 0 EP');
-
-            details.push('');
-
-            const professionData = getProfession();
-
-            details.push(`Beruf: ${professionData[0]}`);
-            details.push(`Waffenübung: ${professionData[1]}`);
-            details.push(`Handelsgüter: ${professionData[2]} und ${getEquipment()}`);
 
             details.push('');
 
