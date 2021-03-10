@@ -127,6 +127,38 @@
             ].random()
         }
 
+        function getSpecialEquipment(){
+            return [
+                `Kleiner Hamster, der noch einen Namen braucht`, `${roll(20)} Murmeln`,
+                `Dose Würmer zum Angeln`, `Holzkeil`, `Blockflöte`, `Flagge mit dem Dorfwappen`,
+                `Eine Goldmünze, versteckt im Stiefelabsatz`, `Ungeöffneter Brief`, `Beutel mit guten Teeblättern`,
+                `Kleiner Spiegel`, `Leere Flasche`, `Beutel Zucker`, `Kreisel`, `Gute Pfeife`,
+                `Säckchen mit ${roll(100, 2)} Bohnen (1 Bohne ist magisch)`, `Stück Kreide`, `Zinnkrug`, `Stück Seife`,
+                `${roll(6, 2)} Nägel`, `Ehering der Großmutter`, `Kleines Holzpferdchen`, `Kerze`,
+                `Tintenfass mit grüner Tinte`, `Geräuchertes Schinkenstück`, `Beutel Pfeifenkraut`, `Gezinkter Würfel`,
+                `Siegelwachs`, `Gute Flasche Wein`, `${roll(6, 2)} Kerzendochte`, `Siegelring`, `Rolle Nähgarn`, `Meißel`,
+                `Hübscher Kieselstein`, `Holzschüssel und Holzlöffel`, `Lederschürze (kein Rüstungswert)`,
+                `Kräutersalbe gegen Warzen`, `Küchenkräuter`, `Eisentopf`, `Ziernadel für den Umhang`,
+                `Haarspange aus Silber (Wert: ${roll(6)} SM)`, `${roll(6, 4)} Pfefferkörner`, `Safran (Wert: ${roll(6)} GM)`,
+                `Rezeptbuch einer Kräuterhexe`, `${roll(8)} Nägel`, `Altes Kartenspiel mit seltsamen Bildern (eine Karte fehlt)`,
+                `Freundliche, kleine Katze`, `Verflucht modischer Hut`, `Brieftaube mit drei Zehen`, `Marmelade aus dem letzten Sommer`,
+                `Rucksack`, `Hühnerei`, `Feuerholzbündel`, `Nervige Triangel`, `Eine Marionette, die aussieht wie einer deiner Gefährten`,
+                `Ein Glas voller Glühwürmchen`, `Beutel Teeblätter`, `Seil und Enterhaken`, `Heringe und Hammer`, `Zelt für eine Person`,
+                `Glöckchen`, `Schuppe einer Meerjungfrau (wurde dir zumindest gesagt)`, `Schachtel mit einem seltsamen, grünen Käfer`,
+                `Grüner Leuchtkristall`, `Die in rotes Leder gebundene Dorfchronik`, `Traumkräuter`,
+                `Das Bleipendel einer fahrenden Priesterin`, `${roll(6)} wirklich schmackhafte Pilze`,
+                `Eine Schubkarre voll Rüben (Wert ${roll(10, 2)} KM)`, `Glücksbringer (kann ausgegeben werden, wie ein Glückspunkt)`,
+                `Kompass eines alten, untergegangenen Schiffes`, `Bequeme Stiefel`, `Trinkhorn`, `Fackel, Feuerstein und Stahl`,
+                `Pinsel und Farben`, `Silberne Ohrringe (Wert ${roll(4, 2)} SM)`, `Das Schwert deines Vaters`, `Heilkräuter (heilen ${roll(3)} TP)`,
+                `Goldfischglas ohne Goldfisch`, `Ein (oder dein?) Glasauge`, `Beutel Kreidestaub`, `Faustgroßer Halbedelstein im Wert von ${roll(6)} SM`,
+                `Trommel`, `Seltsame Alraunenwurzel die aussieht wie ein Gnom`, `Ein treuer Hund namens Trax`, `Gutes Kletterseil`,
+                `Wegbeschreibung zu einem gutem Gasthaus`, `Den schwarzen König eines kostbaren Schachspiels`,
+                `Skarabäus aus Bronze (Wert ${roll(6, 2)} SM)`, `Schlüssel mit einem traurigen Gesicht`, `Große Honigwabe eingehüllt in Wachspapier`,
+                `Rotes Wollknäuel`, `Eine Liste mit ${roll(6)} Leuten, die dir was schulden`, `Toller Gürtel mit Schnalle`, `Graue Perle`,
+                `Maßband`, `Fläschchen Öl`, `Sehr gutes Hemd`, `Rübe`, `Stein, mit einer Silberader`, `Der Zahn eines Heiligen`
+            ].random()
+        }
+
         function generate() {
             let details = [];
 
@@ -134,7 +166,8 @@
 
             details.push(`Beruf: ${professionData[0]}`);
             details.push(`Waffenübung: ${professionData[1]}`);
-            details.push(`Handelsgüter: ${professionData[2]} und ${getEquipment()}`);
+            details.push(`Handelsgüter: ${professionData[2]} und ${getSpecialEquipment()}`);
+            details.push(`Besonderer Gegenstand: ${getSpecialEquipment()}`);
 
             details.push('');
 
