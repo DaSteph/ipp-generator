@@ -17,159 +17,224 @@
         }
 
         function fixUmlauts(value) {
-            value = value.replace(/ä/g, '&auml;');
-            value = value.replace(/ö/g, '&ouml;');
-            value = value.replace(/ü/g, '&uuml;');
-            value = value.replace(/ß/g, '&szlig;');
-            value = value.replace(/Ä/g, '&Auml;');
-            value = value.replace(/Ö/g, '&Ouml;');
-            value = value.replace(/Ü/g, '&Uuml;');
+            value = value.replace(/ä/g, "&auml;");
+            value = value.replace(/ö/g, "&ouml;");
+            value = value.replace(/ü/g, "&uuml;");
+            value = value.replace(/ß/g, "&szlig;");
+            value = value.replace(/Ä/g, "&Auml;");
+            value = value.replace(/Ö/g, "&Ouml;");
+            value = value.replace(/Ü/g, "&Uuml;");
             return value;
         }
 
-        function getProfession() {
-            const professions = {
-                1: ['Alchemist', 'Stab', 'Öl, 1 Fläschchen'],
-                2: ['Tierbändiger', 'Knüppel', 'Pony'],
-                3: ['Waffenschmied', 'Hammer (wie Knüppel)', 'Eisenhelm'],
-                4: ['Astrologe', 'Dolch', 'Fernrohr'],
-                5: ['Barbier', 'Rasierklinge (wie Dolch)', 'Schere'],
-                6: ['Büttel', 'Stab', 'Heiliges Symbol'],
-                7: ['Imker', 'Stab', 'Honigtopf'],
-                8: ['Schmied', 'Hammer (wie Knüppel)', 'Stahlzange'],
-                9: ['Metzger', 'Hackbeil (wie Axt)', '1 Stück Rindfleisch'],
-                10: ['Karawanenwache', 'Kurzschwert', 'Leinen, 1 m'],
-                11: ['Käser', 'Schlagstock (wie Stab)', 'Stinkender Käse'],
-                12: ['Schuster', 'Ahle (wie Dolch)', 'Schuhlöffel'],
-                13: ['Betrüger', 'Dolch', 'Hochwertiger Mantel'],
-                14: ['Böttcher', 'Brechstange (wie Knüppel)', 'Fass'],
-                15: ['Straßenhändler', 'Messer (wie Dolch)', 'Früchte'],
-                16: ['Taschendieb', 'Dolch', 'Kleine Kiste'],
-                17: ['Grabengräber', 'Schaufel (wie Stab)', 'Feine Erde, 0,5 kg'],
-                18: ['Hafenarbeiter', 'Stange (wie Stab)', 'ein verspätetes Rollenspielbuch'],
-                19: ['Zwergischer Apotheker', 'Schlagstock (wie Stab)', 'Stahlphiole'],
-                20: ['Zwergischer Schmied', 'Hammer (wie Knüppel)', 'Mithril, 30 g'],
-                21: ['Zwergischer Kistenmacher', 'Meißel (wie Dolch)', 'Holz, 5 kg'],
-                22: ['Zwergischer Hirte', 'Stab', 'Sau**'],
-                23: ['Zwergischer Minenarbeiter', 'Hacke (wie Knüppel)', 'Laterne'],
-                25: ['Zwergischer Pilzzüchter', 'Schaufel (wie Stab)', 'Sack'],
-                26: ['Zwergischer Rattenfänger', 'Knüppel', 'Netz'],
-                27: ['Zwergischer Steinmetz', 'Hammer', 'schöner Stein, 5 kg'],
-                29: ['Elfischer Kunsthandwerker', 'Stab', 'Ton, ½ kg'],
-                30: ['Elfischer Advokat', 'Schreibfeder (wie Wurfpfeil)', 'Buch'],
-                31: ['Elfischer Kerzenmacher', 'Schere (wie Dolch)', 'Kerzen, 20'],
-                32: ['Elfischer Falkner', 'Dolch', 'Falke'],
-                33: ['Elfischer Förster', 'Stab', 'Kräuter, ½ kg'],
-                35: ['Elfischer Glasbläser', 'Hammer (wie Knüppel)', 'Glasperlen'],
-                36: ['Elfischer Navigator', 'Kurzbogen', 'Fernrohr'],
-                37: ['Elfischer Gelehrter', 'Dolch', 'Pergament und Schreibfeder'],
-                39: [`Bauer, ${['Kartoffeln', 'Weizen', 'Rüben', 'Mais', 'Reis', 'Pastinaken', 'Rettich', 'Steckrüben'].random()}`, 'Mistgabel (wie Speer)', `Henne oder ${['Schaf', 'Ziege', 'Rind', 'Ente', 'Gans', 'Esel'].random()}`],
-                48: ['Wahrsager', 'Dolch', 'Tarotkarten'],
-                49: ['Glücksspieler', 'Knüppel', 'Würfel'],
-                50: ['Buttenmann/-frau', 'Handschaufel (wie Dolch)', 'Sack gesammelter Notdurft'],
-                51: ['Totengräber', 'Schaufel (wie Stab)', 'Handschaufel'],
-                53: ['Gildenbettler', 'Schleuder', 'Krücken'],
-                55: ['Halblinghühnermetzger', 'Handaxt', 'Hühnchenfleisch, 2½ kg'],
-                56: ['Halblingfärber', 'Stab', 'Stoff, 3 m'],
-                58: ['Halblinghandschuhmacher', 'Ahle (wie Dolch)', 'Handschuhe, 4 Paar'],
-                59: ['Halbling vom Fahrenden Volk', 'Schleuder', 'Zauberpuppe'],
-                60: ['Halblingkurzwarenhändler', 'Schere (wie Dolch)', 'Feine Herrenkleidung, 3 Garnituren'],
-                61: ['Halblingseemann', 'Messer (wie Dolch)', 'Segeltuch, 2 m'],
-                62: ['Halblinggeldverleiher', 'Kurzschwert', '5 GM, 10 SM, 200 KM'],
-                63: ['Halblinghändler', 'Kurzschwert', '20 SM'],
-                64: ['Halblinglandstreicher', 'Knüppel', 'Bettelschale'],
-                65: ['Heiler', 'Knüppel', 'Heiliges Wasser, 1 Fläschchen'],
-                66: ['Kräuterkundler', 'Knüppel', 'Kräuter, 0,5 kg'],
-                67: ['Hirte', 'Stab', 'Schäferhund**'],
-                68: ['Jäger', 'Kurzbogen', 'Hirschfell'],
-                70: ['Vertragsknecht', 'Stab', 'Medaillon'],
-                71: ['Narr', 'Wurfpfeil', 'Seidenkleidung'],
-                72: ['Juwelier', 'Dolch', 'Edelstein, 20 GM wert'],
-                73: ['Schlosser', 'Dolch', 'Feinwerkzeug'],
-                74: ['Bettler', 'Knüppel', 'Käsesoße'],
-                75: ['Söldner', 'Langschwert', 'Fellrüstung'],
-                76: ['Kaufmann', 'Dolch', '4 GM, 14 SM, 27 KM'],
-                77: ['Müller/Bäcker', 'Knüppel', 'Mehl, 0,5 kg'],
-                78: ['Barde', 'Dolch', 'Ukulele'],
-                79: ['Adeliger', 'Langschwert', 'Goldring, 10 GM wert'],
-                80: ['Waise', 'Knüppel', 'Stoffpuppe'],
-                81: ['Stallknecht', 'Stab', 'Zaumzeug'],
-                82: ['Gesetzloser', 'Kurzschwert', 'Lederrüstung'],
-                83: ['Seiler', 'Messer (wie Dolch)', 'Seil, 30 m'],
-                84: ['Schreiber', 'Wurfpfeil', 'Pergament, 10 Blätter'],
-                85: ['Schamane', 'Streitkolben', 'Kräuter, 0,5 kg'],
-                86: ['Sklave', 'Knüppel', 'Seltsam aussehender Stein'],
-                87: ['Schmuggler', 'Schleuder', 'Wasserdichter Sack'],
-                88: ['Soldat', 'Speer', 'Schild'],
-                89: ['Knappe', 'Langschwert', 'Stahlhelm'],
-                91: ['Steuereintreiber', 'Langschwert', '100 KM'],
-                92: ['Fallensteller', 'Schleuder', 'Dachsfell'],
-                94: ['Gassenkind', 'Stock (wie Knüppel)', 'Bettelschale'],
-                95: ['Wagner', 'Knüppel', `Schubkarre (${['Tomaten', 'nichts', 'Stroh', 'eure Toten', 'Erde', 'Steine'].random()})`],
-                96: ['Weber', 'Dolch', 'Feine Kleidung'],
-                97: ['Zauberlehrling', 'Dolch', 'Schwarzes Zauberbuch'],
-                98: ['Holzfäller', 'Handaxt', 'Bündel Holz']
-            }
-
-            let professionRoll = roll(100);
-            while (!professions.hasOwnProperty(professionRoll)){
-                professionRoll--;
-            }
-            return professions[professionRoll];
-        }
-
-        function getEquipment(){
-            return [
-                'Brecheisen', 'Diebeswerkzeug', 'Eisennägel', 'Fackel', 'Feuerstein und Stahl', 'Fläschchen, leer',
-                'Hammer, klein', 'Heiliges Symbol', 'Kerze', 'Kette, 3 m', 'Kletterhaken', 'Kreide, 1 Stück',
-                'Laterne', 'Öl, 1 Fläschchen (1W6 Brandschaden pro Runde)', 'Ration', 'Rucksack', 'Sack, groß', 'Sack, klein',
-                'Seil, 15 m', 'Handspiegel', 'Stange, 3 m', 'Truhe, leer', 'Weihwasser, 1 Phiole (1W4 Schaden gegen Untote und Teufel)', 'Wasserschlauch',
-            ].random()
-        }
-
-        function getSpecialEquipment(){
-            return [
-                `Kleiner Hamster, der noch einen Namen braucht`, `${roll(20)} Murmeln`,
-                `Dose Würmer zum Angeln`, `Holzkeil`, `Blockflöte`, `Flagge mit dem Dorfwappen`,
-                `Eine Goldmünze, versteckt im Stiefelabsatz`, `Ungeöffneter Brief`, `Beutel mit guten Teeblättern`,
-                `Kleiner Spiegel`, `Leere Flasche`, `Beutel Zucker`, `Kreisel`, `Gute Pfeife`,
-                `Säckchen mit ${roll(100, 2)} Bohnen (1 Bohne ist magisch)`, `Stück Kreide`, `Zinnkrug`, `Stück Seife`,
-                `${roll(6, 2)} Nägel`, `Ehering der Großmutter`, `Kleines Holzpferdchen`, `Kerze`,
-                `Tintenfass mit grüner Tinte`, `Geräuchertes Schinkenstück`, `Beutel Pfeifenkraut`, `Gezinkter Würfel`,
-                `Siegelwachs`, `Gute Flasche Wein`, `${roll(6, 2)} Kerzendochte`, `Siegelring`, `Rolle Nähgarn`, `Meißel`,
-                `Hübscher Kieselstein`, `Holzschüssel und Holzlöffel`, `Lederschürze (kein Rüstungswert)`,
-                `Kräutersalbe gegen Warzen`, `Küchenkräuter`, `Eisentopf`, `Ziernadel für den Umhang`,
-                `Haarspange aus Silber (Wert: ${roll(6)} SM)`, `${roll(6, 4)} Pfefferkörner`, `Safran (Wert: ${roll(6)} GM)`,
-                `Rezeptbuch einer Kräuterhexe`, `${roll(8)} Nägel`, `Altes Kartenspiel mit seltsamen Bildern (eine Karte fehlt)`,
-                `Freundliche, kleine Katze`, `Verflucht modischer Hut`, `Brieftaube mit drei Zehen`, `Marmelade aus dem letzten Sommer`,
-                `Rucksack`, `Hühnerei`, `Feuerholzbündel`, `Nervige Triangel`, `Eine Marionette, die aussieht wie einer deiner Gefährten`,
-                `Ein Glas voller Glühwürmchen`, `Beutel Teeblätter`, `Seil und Enterhaken`, `Heringe und Hammer`, `Zelt für eine Person`,
-                `Glöckchen`, `Schuppe einer Meerjungfrau (wurde dir zumindest gesagt)`, `Schachtel mit einem seltsamen, grünen Käfer`,
-                `Grüner Leuchtkristall`, `Die in rotes Leder gebundene Dorfchronik`, `Traumkräuter`,
-                `Das Bleipendel einer fahrenden Priesterin`, `${roll(6)} wirklich schmackhafte Pilze`,
-                `Eine Schubkarre voll Rüben (Wert ${roll(10, 2)} KM)`, `Glücksbringer (kann ausgegeben werden, wie ein Glückspunkt)`,
-                `Kompass eines alten, untergegangenen Schiffes`, `Bequeme Stiefel`, `Trinkhorn`, `Fackel, Feuerstein und Stahl`,
-                `Pinsel und Farben`, `Silberne Ohrringe (Wert ${roll(4, 2)} SM)`, `Das Schwert deines Vaters`, `Heilkräuter (heilen ${roll(3)} TP)`,
-                `Goldfischglas ohne Goldfisch`, `Ein (oder dein?) Glasauge`, `Beutel Kreidestaub`, `Faustgroßer Halbedelstein im Wert von ${roll(6)} SM`,
-                `Trommel`, `Seltsame Alraunenwurzel die aussieht wie ein Gnom`, `Ein treuer Hund namens Trax`, `Gutes Kletterseil`,
-                `Wegbeschreibung zu einem gutem Gasthaus`, `Den schwarzen König eines kostbaren Schachspiels`,
-                `Skarabäus aus Bronze (Wert ${roll(6, 2)} SM)`, `Schlüssel mit einem traurigen Gesicht`, `Große Honigwabe eingehüllt in Wachspapier`,
-                `Rotes Wollknäuel`, `Eine Liste mit ${roll(6)} Leuten, die dir was schulden`, `Toller Gürtel mit Schnalle`, `Graue Perle`,
-                `Maßband`, `Fläschchen Öl`, `Sehr gutes Hemd`, `Rübe`, `Stein, mit einer Silberader`, `Der Zahn eines Heiligen`
-            ].random()
-        }
+        const dccTables = {
+            professions: [
+                {roll: [1], name:["Alchemist"], race: "Mensch", weapon: {name: "Stab", die: "1d4"}, equipment: ["Öl, 1 Fläschchen"]},
+                {roll: [2], name:["Tierbändiger"], race: "Mensch", weapon: {name: "Knüppel", die: "1d4"}, equipment: ["Pony"]},
+                {roll: [3], name:["Waffenschmied"], race: "Mensch", weapon: {name: "Hammer (wie Knüppel)", die: "1d4"}, equipment: ["Eisenhelm"]},
+                {roll: [4], name:["Astrologe"], race: "Mensch", weapon: {name: "Dolch", die: "1d4"}, equipment: ["Fernrohr"]},
+                {roll: [5], name:["Barbier"], race: "Mensch", weapon: {name: "Rasierklinge (wie Dolch)", die: "1d4"}, equipment: ["Schere"]},
+                {roll: [6], name:["Büttel"], race: "Mensch", weapon: {name: "Stab", die: "1d4"}, equipment: ["Heiliges Symbol"]},
+                {roll: [7], name:["Imker"], race: "Mensch", weapon: {name: "Stab", die: "1d4"}, equipment: ["Honigtopf"]},
+                {roll: [8], name:["Schmied"], race: "Mensch", weapon: {name: "Hammer (wie Knüppel)", die: "1d4"}, equipment: ["Stahlzange"]},
+                {roll: [9], name:["Metzger"], race: "Mensch", weapon: {name: "Hackbeil (wie Axt)", die: "1d4"}, equipment: ["1 Stück Rindfleisch"]},
+                {roll: [10], name:["Karawanenwache"], race: "Mensch", weapon: {name: "Kurzschwert", die: "1d4"}, equipment: ["Leinen, 1 m"]},
+                {roll: [11], name:["Käser"], race: "Mensch", weapon: {name: "Schlagstock (wie Stab)", die: "1d4"}, equipment: ["Stinkender Käse"]},
+                {roll: [12], name:["Schuster"], race: "Mensch", weapon: {name: "Ahle (wie Dolch)", die: "1d4"}, equipment: ["Schuhlöffel"]},
+                {roll: [13], name:["Betrüger"], race: "Mensch", weapon: {name: "Dolch", die: "1d4"}, equipment: ["Hochwertiger Mantel"]},
+                {roll: [14], name:["Böttcher"], race: "Mensch", weapon: {name: "Brechstange (wie Knüppel)", die: "1d4"}, equipment: ["Fass"]},
+                {roll: [15], name:["Straßenhändler"], race: "Mensch", weapon: {name: "Messer (wie Dolch)", die: "1d4"}, equipment: ["Früchte"]},
+                {roll: [16], name:["Taschendieb"], race: "Mensch", weapon: {name: "Dolch", die: "1d4"}, equipment: ["Kleine Kiste"]},
+                {roll: [17], name:["Grabengräber"], race: "Mensch", weapon: {name: "Schaufel (wie Stab)", die: "1d4"}, equipment: ["Feine Erde, 0,5 kg"]},
+                {roll: [18], name:["Hafenarbeiter"], race: "Mensch", weapon: {name: "Stange (wie Stab)", die: "1d4"}, equipment: ["ein verspätetes Rollenspielbuch"]},
+                {roll: [19], name:["Zwergischer Apotheker"], race: "Zwerg", weapon: {name: "Schlagstock (wie Stab)", die: "1d4"}, equipment: ["Stahlphiole"]},
+                {roll: [20], name:["Zwergischer Schmied"], race: "Zwerg", weapon: {name: "Hammer (wie Knüppel)", die: "1d4"}, equipment: ["Mithril, 30 g"]},
+                {roll: [21], name:["Zwergischer Kistenmacher"], race: "Zwerg", weapon: {name: "Meißel (wie Dolch)", die: "1d4"}, equipment: ["Holz, 5 kg"]},
+                {roll: [22], name:["Zwergischer Hirte"], race: "Zwerg", weapon: {name: "Stab", die: "1d4"}, equipment: ["Sau**"]},
+                {roll: [23, 24], name:["Zwergischer Minenarbeiter"], race: "Zwerg", weapon: {name: "Hacke (wie Knüppel)", die: "1d4"}, equipment: ["Laterne"]},
+                {roll: [25], name:["Zwergischer Pilzzüchter"], race: "Zwerg", weapon: {name: "Schaufel (wie Stab)", die: "1d4"}, equipment: ["Sack"]},
+                {roll: [26], name:["Zwergischer Rattenfänger"], race: "Zwerg", weapon: {name: "Knüppel", die: "1d4"}, equipment: ["Netz"]},
+                {roll: [27], name:["Zwergischer Steinmetz"], race: "Zwerg", weapon: {name: "Hammer", die: "1d4"}, equipment: ["schöner Stein, 5 kg"]},
+                {roll: [29], name:["Elfischer Kunsthandwerker"], race: "Elf", weapon: {name: "Stab", die: "1d4"}, equipment: ["Ton, Â½ kg"]},
+                {roll: [30], name:["Elfischer Advokat"], race: "Elf", weapon: {name: "Schreibfeder (wie Wurfpfeil)", die: "1d4"}, equipment: ["Buch"]},
+                {roll: [31], name:["Elfischer Kerzenmacher"], race: "Elf", weapon: {name: "Schere (wie Dolch)", die: "1d4"}, equipment: ["Kerzen, 20"]},
+                {roll: [32], name:["Elfischer Falkner"], race: "Elf", weapon: {name: "Dolch", die: "1d4"}, equipment: ["Falke"]},
+                {roll: [33, 34], name:["Elfischer Förster"], race: "Elf", weapon: {name: "Stab", die: "1d4"}, equipment: ["Kräuter, Â½ kg"]},
+                {roll: [35], name:["Elfischer Glasbläser"], race: "Elf", weapon: {name: "Hammer (wie Knüppel)", die: "1d4"}, equipment: ["Glasperlen"]},
+                {roll: [36], name:["Elfischer Navigator"], race: "Elf", weapon: {name: "Kurzbogen", die: "1d4"}, equipment: ["Fernrohr"]},
+                {roll: [37, 38], name:["Elfischer Gelehrter"], race: "Elf", weapon: {name: "Dolch", die: "1d4"}, equipment: ["Pergament und Schreibfeder"]},
+                {roll: [39, 40, 41, 42, 43, 44, 45, 46, 47], name:["Kartoffelbauer", "Weizenbauer", "Rübenbauer", "Maisbauer", "Reisbauer", "Pastinakenbauer", "Rettichbauer", "Steckrübenbauer"], race: "Mensch", weapon: {name: "Mistgabel (wie Speer)", die: "1d4"}, equipment: ["Henne oder Schaf", "Henne oder Ziege", "Henne oder Rind", "Henne oder Ente", "Henne oder Gans", "Henne oder Esel"]},
+                {roll: [48], name:["Wahrsager"], race: "Mensch", weapon: {name: "Dolch", die: "1d4"}, equipment: ["Tarotkarten"]},
+                {roll: [49], name:["Glücksspieler"], race: "Mensch", weapon: {name: "Knüppel", die: "1d4"}, equipment: ["Würfel"]},
+                {roll: [50], name:["Buttenmann/-frau"], race: "Mensch", weapon: {name: "Handschaufel (wie Dolch)", die: "1d4"}, equipment: ["Sack gesammelter Notdurft"]},
+                {roll: [51, 52], name:["Totengräber"], race: "Mensch", weapon: {name: "Schaufel (wie Stab)", die: "1d4"}, equipment: ["Handschaufel"]},
+                {roll: [53, 54], name:["Gildenbettler"], race: "Mensch", weapon: {name: "Schleuder", die: "1d4"}, equipment: ["Krücken"]},
+                {roll: [55], name:["Halblinghühnermetzger"], race: "Halbling", weapon: {name: "Handaxt", die: "1d4"}, equipment: ["Hühnchenfleisch, 2,5 kg"]},
+                {roll: [56, 57], name:["Halblingfärber"], race: "Halbling", weapon: {name: "Stab", die: "1d4"}, equipment: ["Stoff, 3 m"]},
+                {roll: [58], name:["Halblinghandschuhmacher"], race: "Halbling", weapon: {name: "Ahle (wie Dolch)", die: "1d4"}, equipment: ["Handschuhe, 4 Paar"]},
+                {roll: [59], name:["Halbling vom Fahrenden Volk"], race: "Halbling", weapon: {name: "Schleuder", die: "1d4"}, equipment: ["Zauberpuppe"]},
+                {roll: [60], name:["Halblingkurzwarenhändler"], race: "Halbling", weapon: {name: "Schere (wie Dolch)", die: "1d4"}, equipment: ["Feine Herrenkleidung, 3 Garnituren"]},
+                {roll: [61], name:["Halblingseemann"], race: "Halbling", weapon: {name: "Messer (wie Dolch)", die: "1d4"}, equipment: ["Segeltuch, 2 m"]},
+                {roll: [62], name:["Halblinggeldverleiher"], race: "Halbling", weapon: {name: "Kurzschwert", die: "1d4"}, equipment: ["5 GM, 10 SM, 200 KM"]},
+                {roll: [63], name:["Halblinghändler"], race: "Halbling", weapon: {name: "Kurzschwert", die: "1d4"}, equipment: ["20 SM"]},
+                {roll: [64], name:["Halblinglandstreicher"], race: "Halbling", weapon: {name: "Knüppel", die: "1d4"}, equipment: ["Bettelschale"]},
+                {roll: [65], name:["Heiler"], race: "Mensch", weapon: {name: "Knüppel", die: "1d4"}, equipment: ["Heiliges Wasser, 1 Fläschchen"]},
+                {roll: [66], name:["Kräuterkundler"], race: "Mensch", weapon: {name: "Knüppel", die: "1d4"}, equipment: ["Kräuter, 0,5 kg"]},
+                {roll: [67], name:["Hirte"], race: "Mensch", weapon: {name: "Stab", die: "1d4"}, equipment: ["Schäferhund**"]},
+                {roll: [68, 69], name:["Jäger"], race: "Mensch", weapon: {name: "Kurzbogen", die: "1d4"}, equipment: ["Hirschfell"]},
+                {roll: [70], name:["Vertragsknecht"], race: "Mensch", weapon: {name: "Stab", die: "1d4"}, equipment: ["Medaillon"]},
+                {roll: [71], name:["Narr"], race: "Mensch", weapon: {name: "Wurfpfeil", die: "1d4"}, equipment: ["Seidenkleidung"]},
+                {roll: [72], name:["Juwelier"], race: "Mensch", weapon: {name: "Dolch", die: "1d4"}, equipment: ["Edelstein, 20 GM wert"]},
+                {roll: [73], name:["Schlosser"], race: "Mensch", weapon: {name: "Dolch", die: "1d4"}, equipment: ["Feinwerkzeug"]},
+                {roll: [74], name:["Bettler"], race: "Mensch", weapon: {name: "Knüppel", die: "1d4"}, equipment: ["Käsesoße"]},
+                {roll: [75], name:["Söldner"], race: "Mensch", weapon: {name: "Langschwert", die: "1d4"}, equipment: ["Fellrüstung"]},
+                {roll: [76], name:["Kaufmann"], race: "Mensch", weapon: {name: "Dolch", die: "1d4"}, equipment: ["4 GM, 14 SM, 27 KM"]},
+                {roll: [77], name:["Müller/Bäcker"], race: "Mensch", weapon: {name: "Knüppel", die: "1d4"}, equipment: ["Mehl, 0,5 kg"]},
+                {roll: [78], name:["Barde"], race: "Mensch", weapon: {name: "Dolch", die: "1d4"}, equipment: ["Ukulele"]},
+                {roll: [79], name:["Adeliger"], race: "Mensch", weapon: {name: "Langschwert", die: "1d4"}, equipment: ["Goldring, 10 GM wert"]},
+                {roll: [80], name:["Waise"], race: "Mensch", weapon: {name: "Knüppel", die: "1d4"}, equipment: ["Stoffpuppe"]},
+                {roll: [81], name:["Stallknecht"], race: "Mensch", weapon: {name: "Stab", die: "1d4"}, equipment: ["Zaumzeug"]},
+                {roll: [82], name:["Gesetzloser"], race: "Mensch", weapon: {name: "Kurzschwert", die: "1d4"}, equipment: ["Lederrüstung"]},
+                {roll: [83], name:["Seiler"], race: "Mensch", weapon: {name: "Messer (wie Dolch)", die: "1d4"}, equipment: ["Seil, 30 m"]},
+                {roll: [84], name:["Schreiber"], race: "Mensch", weapon: {name: "Wurfpfeil", die: "1d4"}, equipment: ["Pergament, 10 Blätter"]},
+                {roll: [85], name:["Schamane"], race: "Mensch", weapon: {name: "Streitkolben", die: "1d4"}, equipment: ["Kräuter, 0,5 kg"]},
+                {roll: [86], name:["Sklave"], race: "Mensch", weapon: {name: "Knüppel", die: "1d4"}, equipment: ["Seltsam aussehender Stein"]},
+                {roll: [87], name:["Schmuggler"], race: "Mensch", weapon: {name: "Schleuder", die: "1d4"}, equipment: ["Wasserdichter Sack"]},
+                {roll: [88], name:["Soldat"], race: "Mensch", weapon: {name: "Speer", die: "1d4"}, equipment: ["Schild"]},
+                {roll: [89, 90], name:["Knappe"], race: "Mensch", weapon: {name: "Langschwert", die: "1d4"}, equipment: ["Stahlhelm"]},
+                {roll: [91], name:["Steuereintreiber"], race: "Mensch", weapon: {name: "Langschwert", die: "1d4"}, equipment: ["100 KM"]},
+                {roll: [92, 93], name:["Fallensteller"], race: "Mensch", weapon: {name: "Schleuder", die: "1d4"}, equipment: ["Dachsfell"]},
+                {roll: [94], name:["Gassenkind"], race: "Mensch", weapon: {name: "Stock (wie Knüppel)", die: "1d4"}, equipment: ["Bettelschale"]},
+                {roll: [95], name:["Wagner"], race: "Mensch", weapon: {name: "Knüppel", die: "1d4"}, equipment: ["Schubkarre voll mit Tomaten", "leere Schubkarre", "Schubkarre voll mit Stroh", "Schubkarre voll mit euren Toten", "Schubkarre voll mit Erde", "Schubkarre voll mit Steinen"]},
+                {roll: [96], name:["Weber"], race: "Mensch", weapon: {name: "Dolch", die: "1d4"}, equipment: ["Feine Kleidung"]},
+                {roll: [97], name:["Zauberlehrling"], race: "Mensch", weapon: {name: "Dolch", die: "1d4"}, equipment: ["Schwarzes Zauberbuch"]},
+                {roll: [98, 99, 100], name:["Holzfäller"], race: "Mensch", weapon: {name: "Handaxt", die: "1d4"}, equipment: ["Bündel Holz"]},
+            ],
+            equipment: [
+                "Brecheisen", "Diebeswerkzeug", "Eisennägel", "Fackel", "Feuerstein und Stahl", "Fläschchen, leer",
+                "Hammer, klein", "Heiliges Symbol", "Kerze", "Kette, 3 m", "Kletterhaken", "Kreide, 1 Stück",
+                "Laterne", "Öl, 1 Fläschchen (1d6 Brandschaden pro Runde)", "Ration", "Rucksack", "Sack, groß", "Sack, klein",
+                "Seil, 15 m", "Handspiegel", "Stange, 3 m", "Truhe, leer", "Weihwasser, 1 Phiole (1d4 Schaden gegen Untote und Teufel)", "Wasserschlauch"
+            ],
+            specialEquipment: [
+                "Kleiner Hamster, der noch einen Namen braucht", "1d20 Murmeln",
+                "Dose Würmer zum Angeln", "Holzkeil", "Blockflöte", "Flagge mit dem Dorfwappen",
+                "Eine Goldmünze, versteckt im Stiefelabsatz", "Ungeöffneter Brief", "Beutel mit guten Teeblättern",
+                "Kleiner Spiegel", "Leere Flasche", "Beutel Zucker", "Kreisel", "Gute Pfeife",
+                "Säckchen mit 2d100 Bohnen (1 Bohne ist magisch)", "Stück Kreide", "Zinnkrug", "Stück Seife",
+                "2W6 Nägel", "Ehering der Großmutter", "Kleines Holzpferdchen", "Kerze",
+                "Tintenfass mit grüner Tinte", "Geräuchertes Schinkenstück", "Beutel Pfeifenkraut", "Gezinkter Würfel",
+                "Siegelwachs", "Gute Flasche Wein", "2d6 Kerzendochte", "Siegelring", "Rolle Nähgarn", "Meißel",
+                "Hübscher Kieselstein", "Holzschüssel und Holzlöffel", "Lederschürze (kein Rüstungswert)",
+                "Kräutersalbe gegen Warzen", "Küchenkräuter", "Eisentopf", "Ziernadel für den Umhang",
+                "Haarspange aus Silber (Wert: 1d6 SM)", "4d6 Pfefferkörner", "Safran (Wert: 1d6 GM)",
+                "Rezeptbuch einer Kräuterhexe", "1d8 Nägel", "Altes Kartenspiel mit seltsamen Bildern (eine Karte fehlt)",
+                "Freundliche, kleine Katze", "Verflucht modischer Hut", "Brieftaube mit drei Zehen", "Marmelade aus dem letzten Sommer",
+                "Rucksack", "Hühnerei", "Feuerholzbündel", "Nervige Triangel", "Eine Marionette, die aussieht wie einer deiner Gefährten",
+                "Ein Glas voller Glühwürmchen", "Beutel Teeblätter", "Seil und Enterhaken", "Heringe und Hammer", "Zelt für eine Person",
+                "Glöckchen", "Schuppe einer Meerjungfrau (wurde dir zumindest gesagt)", "Schachtel mit einem seltsamen, grünen Käfer",
+                "Grüner Leuchtkristall", "Die in rotes Leder gebundene Dorfchronik", "Traumkräuter",
+                "Das Bleipendel einer fahrenden Priesterin", "1W6 wirklich schmackhafte Pilze",
+                "Eine Schubkarre voll Rüben (Wert 2d10 KM)", "Glücksbringer (kann ausgegeben werden, wie ein Glückspunkt)",
+                "Kompass eines alten, untergegangenen Schiffes", "Bequeme Stiefel", "Trinkhorn", "Fackel, Feuerstein und Stahl",
+                "Pinsel und Farben", "Silberne Ohrringe (Wert 2d4 SM)", "Das Schwert deines Vaters", "Heilkräuter (heilen 1d3 TP)",
+                "Goldfischglas ohne Goldfisch", "Ein (oder dein?) Glasauge", "Beutel Kreidestaub", "Faustgroßer Halbedelstein im Wert von 1d6 SM",
+                "Trommel", "Seltsame Alraunenwurzel die aussieht wie ein Gnom", "Ein treuer Hund namens Trax", "Gutes Kletterseil",
+                "Wegbeschreibung zu einem gutem Gasthaus", "Den schwarzen König eines kostbaren Schachspiels",
+                "Skarabäus aus Bronze (Wert 2d6 SM)", "Schlüssel mit einem traurigen Gesicht", "Große Honigwabe eingehüllt in Wachspapier",
+                "Rotes Wollknäuel", "Eine Liste mit 1d6 Leuten, die dir was schulden", "Toller Gürtel mit Schnalle", "Graue Perle",
+                "Maßband", "Fläschchen Öl", "Sehr gutes Hemd", "Rübe", "Stein, mit einer Silberader", "Der Zahn eines Heiligen"
+            ],
+            traits: [
+                {name: "Größe", values: [["klein", "klein", "klein", "untersetzt", "untersetzt", "untersetzt",
+                        "mittelgroß", "mittelgroß", "mittelgroß", "mittelgroß", "mittelgroß", "mittelgroß",
+                        "mittelgroß", "mittelgroß", "mittelgroß", "groß", "groß", "groß",
+                        "groß", "groß", "groß", "groß", "sehr groß", "sehr groß"]]},
+                {name: "Körperfülle", values: [["dürr", "dürr", "schlaksig", "schlaksig", "dünn", "dünn",
+                        "dünn", "sehnig", "sehnig", "schlank", "schlank", "schlank",
+                        "schlank", "schlank", "schlank", "kräftig", "kräftig", "kräftig",
+                        "kräftig", "kräftig", "füllig", "füllig", "massig", "massig"]]},
+                {name: "Augenfarbe", values: [["hellgrau", "stahlblau", "tiefblau", "tiefblau", "hellbraun", "hellbraun",
+                        "hellbraun", "hellbraun", "hellbraun", "hellbraun", "dunkelbraun", "dunkelbraun",
+                        "dunkelbraun", "dunkelbraun", "dunkelbraun", "dunkelbraun", "dunkelbraun", "dunkelbraun",
+                        "grau", "schwarz", "bernsteinfarben", "grau-grün", "smaragdgrün", "zweifarbig"]]},
+                {name: "Kopfhaar", values: [["lang, zusammengebunden", "lang, zusammengebunden", "lang, zusammengebunden", "lang, zusammengebunden", "Zopf", "lang, lose",
+                        "lang, lose", "lang, lose", "schulterlang", "schulterlang", "schulterlang", "schulterlang",
+                        "schulterlang", "schulterlang", "schulterlang", "kurz", "kurz", "kurz",
+                        "kurz", "kurz", "geschoren", "geschoren", "geschoren", "Glatze"]]},
+                {name: "Bart", values: [["keiner", "keiner", "keiner", "keiner", "keiner", "keiner",
+                        "Dreitagebart", "Dreitagebart", "Dreitagebart", "Dreitagebart", "Dreitagebart", "Schnurrbart, klein",
+                        "Schnurrbart, klein", "Schnurrbart, klein", "Schnurrbart, klein", "Schnurrbart, klein", "Schnurrbart, groß", "Schnurrbart, groß",
+                        "Schnurrbart, groß", "Schnurrbart, groß", "Schnurrbart, groß", "Koteletten", "Koteletten", "Ziegenbart",
+                        "Spitzbart", "gestutzter Vollbart", "gestutzter Vollbart", "gestutzter Vollbart", "gestutzter Vollbart", "wilder Vollbart"]]},
+                {name: "Haarfarbe", values: [["schwarz", "schwarz", "schwarz", "schwarz", "schwarz", "dunkelbraun",
+                        "dunkelbraun", "dunkelbraun", "braun", "braun", "braun", "braun",
+                        "dunkelblond", "dunkelblond", "dunkelblond", "blond", "blond", "blond",
+                        "goldblond", "goldblond", "rot", "weiß", "kupferfarben", "silbergrau"]]},
+                {name: "Nase", values: [["Stupsnase", "Stupsnase", "Stupsnase", "Stupsnase", "Stupsnase", "normal, unauffällig",
+                        "normal, unauffällig", "normal, unauffällig", "normal, unauffällig", "normal, unauffällig", "auffällig groß", "auffällig groß",
+                        "auffällig groß", "auffällig breit", "auffällig breit", "auffällig breit", "auffällig breit", "nach oben gebogen, hochnäsig",
+                        "nach oben gebogen, hochnäsig", "nach oben gebogen, hochnäsig", "Adlernase (Höcker)", "Adlernase (Höcker)", "Adlernase (Höcker)", "krumm / gebrochen"]]},
+                {name: "Kleidung", values: [["geflickt, praktisch", "geflickt, praktisch", "geflickt, praktisch", "geflickt, praktisch", "geflickt, praktisch", "einfaches Leder und Leinen",
+                        "einfaches Leder und Leinen", "einfaches Leder und Leinen", "einfaches Leder und Leinen", "einfaches Leder und Leinen", "gute Stoffe, bearbeitetes Leder", "gute Stoffe, bearbeitetes Leder",
+                        "gute Stoffe, bearbeitetes Leder", "gute Stoffe, bearbeitetes Leder", "gute Stoffe, bearbeitetes Leder", "sauber, geschmackvoll", "sauber, geschmackvoll", "sauber, geschmackvoll",
+                        "sauber, geschmackvoll", "sauber, geschmackvoll", "ausgesucht, teuer", "ausgesucht, teuer", "ausgesucht, teuer", "übertrieben, bunt"]]},
+                {name: "Gemüt", values: [["fröhlich", "traurig", "seltsam", "angestrengt", "unbeirrbar", "hoffnungslos",
+                        "hoffnungsvoll", "besessen", "ahnungslos", "ängstlich", "hingebungsvoll", "angeheitert",
+                        "aggressiv", "heftig", "vorsichtig", "alarmiert", "scharfzüngig", "ungeschickt",
+                        "scharfsinnig", "aufrecht", "verstohlen", "geheimnisvoll", "bemüht", "misstrauisch"],
+                        ["verliebt", "jovial", "erzürnt", "verträumt", "paranoid", "friedfertig",
+                        "zufrieden", "gleichgültig", "zuversichtlich", "rachsüchtig", "angeberisch", "draufgängerisch",
+                        "böswillig", "gönnerhaft", "weinselig", "unbequem", "gelangweilt", "aufgeweckt",
+                        "neugierig", "begriffsstutzig", "ungehobelt", "besserwisserisch", "pessimistisch", "unzufrieden"]]},
+            ],
+            fate: {
+                1: {name: "Strenger Winter", omen: "alle Angriffswürfe"},
+                2: {name: "Der Bulle", omen: "Angriffswürfe im Nahkampf"},
+                3: {name: "Glückstag", omen: "Angriffswürfe mit Fernkampfwaffen"},
+                4: {name: "Von Wölfen aufgezogen", omen: "unbewaffnete Angriffswürfe"},
+                5: {name: "Im Sattel gezeugt", omen: "Berittene Angriffswürfe"},
+                6: {name: "Geboren auf dem Schlachtfeld", omen: "Schadenswürfe"},
+                7: {name: "Pfad des Bären", omen: "Schadenswürfe im Nahkampf"},
+                8: {name: "Adlerauge", omen: "Schadenswürfe mit Fernkampfwaffen"},
+                9: {name: "Rudeljäger", omen: "Angriffs- und Schadenswürfe für die auf Stufe 0 erlernte Waffe"},
+                10: {name: "Geboren unter einem Webstuhl", omen: "Fertigkeitswürfe (inkl. Diebesfertigkeiten)"},
+                11: {name: "Listigkeit des Fuchses", omen: "Fallen entdecken/entschärfen"},
+                12: {name: "Vierblättriges Kleeblatt", omen: "Geheimtüren entdecken"},
+                13: {name: "Siebter Sohn", omen: "Zauberwürfe"},
+                14: {name: "Der tobende Sturm", omen: "Zauberschaden"},
+                15: {name: "Rechtschaffenes Herz", omen: "Unheiliges-vertreiben-Würfe"},
+                16: {name: "Überlebender der Pest", omen: "Magische Heilung (Bei Klerikern wird der Bonus auf alle Heilungen durch den Kleriker angewandt. Bei Nichtklerikern wird der Bonus auf alle magischen Heilungen aus anderen Quellen angewandt)"},
+                17: {name: "Glücksbringer", omen: "Rettungswürfe"},
+                18: {name: "Schutzengel", omen: "Rettungswürfe, um Fallen zu entkommen"},
+                19: {name: "Überlebender eines Spinnenbisses", omen: "Rettungswürfe gegen Gift"},
+                20: {name: "Vom Blitz getroffen", omen: "Reflexwürfe"},
+                21: {name: "Überlebender einer Hungersnot", omen: "Zähigkeitswürfe"},
+                22: {name: "Der Versuchung widerstanden", omen: "Willenskraftwürfe"},
+                23: {name: "Verzaubertes Heim", omen: "Rüstungsklasse"},
+                24: {name: "Schnelligkeit der Kobra", omen: "Initiative"},
+                25: {name: "Reiche Ernte", omen: "Trefferpunkte (gilt für jede Stufe)"},
+                26: {name: "Arm des Kriegers", omen: "Kritische Treffertabellen (Glück beeinflusst normalerweise kritische Treffer und Patzer. Bei diesem Ergebnis wird der Modifikator für kritische Treffer und Patzer verdoppelt.)"},
+                27: {name: "Unheiliges Heim", omen: "Verderbniswürfe"},
+                28: {name: "Der zerbrochene Stern", omen: "Patzer (Glück beeinflusst normalerweise kritische Treffer und Patzer. Bei diesem Ergebnis wird der Modifikator für kritische Treffer und Patzer verdoppelt.)"},
+                29: {name: "Vogelgesang", omen: "Anzahl an Sprachen"},
+                30: {name: "Wildes Kind", omen: "Bewegungsrate (jedes +1/-1 = +1,5 m/-1,5 m)"},
+            },
+        };
 
         function generate() {
             let details = [];
 
-            const professionData = getProfession();
+            const professionRoll = roll(100);
+            const profession = dccTables.professions.find((e) => e.roll.includes(professionRoll));
 
-            details.push(`Beruf: ${professionData[0]}`);
-            details.push(`Waffenübung: ${professionData[1]}`);
-            details.push(`Handelsgüter: ${professionData[2]} und ${getSpecialEquipment()}`);
-            details.push(`Besonderer Gegenstand: ${getSpecialEquipment()}`);
+            details.push(`Beruf: ${profession.name.random()}`);
+            details.push(`Waffe: ${profession.weapon.name} (${profession.weapon.die})`);
+            details.push(`Gegenstand: ${profession.equipment.random()}`);
+            details.push(`Gegenstand: ${dccTables.equipment.random()}`);
+            details.push(`Besonderer Gegenstand: ${dccTables.specialEquipment.random()}`);
 
-            details.push('');
+            details.push("");
 
             const strength = roll(6, 3);
             const agility = roll(6, 3);
@@ -180,84 +245,33 @@
 
             const modifier = {3: -3, 4: -2, 5: -2, 6: -1, 7: -1, 8: -1, 9: 0, 10: 0, 11: 0, 12: 0, 13: +1, 14: +1, 15: +1, 16: +2, 17: +2, 18: +3};
 
-            details.push(`Stärke: ${strength} mod: ${modifier[strength] >= 0 ? '+' : ''}${modifier[strength]}`);
-            details.push(`Geschicklichkeit: ${agility} mod: ${modifier[agility] >= 0 ? '+' : ''}${modifier[agility]}`);
-            details.push(`Ausdauer: ${stamina} mod: ${modifier[stamina] >= 0 ? '+' : ''}${modifier[stamina]}`);
-            details.push(`Persönlichkeit: ${personality} mod: ${modifier[personality] >= 0 ? '+' : ''}${modifier[personality]}`);
-            details.push(`Intelligence: ${intelligence} mod: ${modifier[intelligence] >= 0 ? '+' : ''}${modifier[intelligence]}`);
-            details.push(`Glück: ${luck} mod: ${modifier[luck] >= 0 ? '+' : ''}${modifier[luck]}`);
-            let fate = roll(30) + modifier[luck];
-            fate = Math.min(Math.max(fate, 1), 30);
-            const fateList = {1: 'Strenger Winter: alle Angriffswürfe', 2: 'Der Bulle: Angriffswürfe im Nahkampf', 3: 'Glückstag: Angriffswürfe mit Fernkampfwaffen', 4: 'Von Wölfen aufgezogen: unbewaffnete Angriffswürfe', 5: 'Im Sattel gezeugt: Berittene Angriffswürfe', 6: 'Geboren auf dem Schlachtfeld: Schadenswürfe', 7: 'Pfad des Bären: Schadenswürfe im Nahkampf', 8: 'Adlerauge: Schadenswürfe mit Fernkampfwaffen', 9: 'Rudeljäger: Angriffs- und Schadenswürfe für die auf Stufe 0 erlernte Waffe', 10: 'Geboren unter einem Webstuhl: Fertigkeitswürfe (inkl. Diebesfertigkeiten)',
-                11: 'Listigkeit des Fuchses: Fallen entdecken/entschärfen', 12: 'Vierblättriges Kleeblatt: Geheimtüren entdecken', 13: 'Siebter Sohn: Zauberwürfe', 14: 'Der tobende Sturm: Zauberschaden', 15: 'Rechtschaffenes Herz: Unheiliges-vertreiben-Würfe', 16: 'Überlebender der Pest: Magische Heilung (Bei Klerikern wird der Bonus auf alle Heilungen durch den Kleriker angewandt. Bei Nichtklerikern wird der Bonus auf alle magischen Heilungen aus anderen Quellen angewandt)', 17: 'Glücksbringer: Rettungswürfe', 18: 'Schutzengel: Rettungswürfe, um Fallen zu entkommen', 19: 'Überlebender eines Spinnenbisses: Rettungswürfe gegen Gift', 20: 'Vom Blitz getroffen: Reflexwürfe',
-                21: 'Überlebender einer Hungersnot: Zähigkeitswürfe', 22: 'Der Versuchung widerstanden: Willenskraftwürfe', 23: 'Verzaubertes Heim: Rüstungsklasse', 24: 'Schnelligkeit der Kobra: Initiative', 25: 'Reiche Ernte: Trefferpunkte (gilt für jede Stufe)', 26: 'Arm des Kriegers: Kritische Treffertabellen (Glück beeinflusst normalerweise kritische Treffer und Patzer. Bei diesem Ergebnis wird der Modifikator für kritische Treffer und Patzer verdoppelt.)', 27: 'Unheiliges Heim: Verderbniswürfe', 28: 'Der zerbrochene Stern: Patzer (Glück beeinflusst normalerweise kritische Treffer und Patzer. Bei diesem Ergebnis wird der Modifikator für kritische Treffer und Patzer verdoppelt.)', 29: 'Vogelgesang: Anzahl an Sprachen', 30: 'Wildes Kind: Bewegungsrate (jedes +1/-1 = +1,5 m/-1,5 m)'}
-            details.push(`Schicksalswurf: ${fateList[fate]}`);
+            details.push(`Stärke: ${strength} mod: ${modifier[strength] >= 0 ? "+" : ""}${modifier[strength]}`);
+            details.push(`Geschicklichkeit: ${agility} mod: ${modifier[agility] >= 0 ? "+" : ""}${modifier[agility]}`);
+            details.push(`Ausdauer: ${stamina} mod: ${modifier[stamina] >= 0 ? "+" : ""}${modifier[stamina]}`);
+            details.push(`Persönlichkeit: ${personality} mod: ${modifier[personality] >= 0 ? "+" : ""}${modifier[personality]}`);
+            details.push(`Intelligence: ${intelligence} mod: ${modifier[intelligence] >= 0 ? "+" : ""}${modifier[intelligence]}`);
+            details.push(`Glück: ${luck} mod: ${modifier[luck] >= 0 ? "+" : ""}${modifier[luck]}`);
+            const fateRoll = Math.min(Math.max(roll(30) + modifier[luck], 1), 30);
+            const fate = dccTables.fate[fateRoll];
+            details.push(`Schicksalswurf: ${fate.name} - Bonus auf ${fate.omen}`);
 
-            details.push('');
+            details.push("");
 
-            details.push('Angriffswurf +0');
-            details.push('Zähigkeitswurf +0');
-            details.push('Reflexwurf +0');
-            details.push('Willenskraftwurf +0');
+            details.push("Angriffswurf +0");
+            details.push("Zähigkeitswurf +0");
+            details.push("Reflexwurf +0");
+            details.push("Willenskraftwurf +0");
             details.push(`Trefferpunkte: ${roll(4)}`);
-            details.push('Erfahrung: 0 EP');
+            details.push("Erfahrung: 0 EP");
 
-            details.push('');
+            details.push("");
 
-            details.push(`Größe: ${['klein', 'klein', 'klein', 'untersetzt', 'untersetzt', 'untersetzt',
-                'mittelgroß', 'mittelgroß', 'mittelgroß', 'mittelgroß', 'mittelgroß', 'mittelgroß',
-                'mittelgroß', 'mittelgroß', 'mittelgroß', 'groß', 'groß', 'groß',
-                'groß', 'groß', 'groß', 'groß', 'sehr groß', 'sehr groß'].random()}`);
+            dccTables.traits.forEach((trait) => { details.push(`${trait.name}: ` + trait.values.map((v) => v.random()).join('-'));});
 
-            details.push(`Körperfülle: ${['dürr', 'dürr', 'schlaksig', 'schlaksig', 'dünn', 'dünn',
-                'dünn', 'sehnig', 'sehnig', 'schlank', 'schlank', 'schlank',
-                'schlank', 'schlank', 'schlank', 'kräftig', 'kräftig', 'kräftig',
-                'kräftig', 'kräftig', 'füllig', 'füllig', 'massig', 'massig'].random()}`);
-
-            details.push(`Augenfarbe: ${['hellgrau', 'stahlblau', 'tiefblau', 'tiefblau', 'hellbraun', 'hellbraun',
-                'hellbraun', 'hellbraun', 'hellbraun', 'hellbraun', 'dunkelbraun', 'dunkelbraun',
-                'dunkelbraun', 'dunkelbraun', 'dunkelbraun', 'dunkelbraun', 'dunkelbraun', 'dunkelbraun',
-                'grau', 'schwarz', 'bernsteinfarben', 'grau-grün', 'smaragdgrün', 'zweifarbig'].random()}`);
-
-            details.push(`Kopfhaar: ${['lang, zusammengebunden', 'lang, zusammengebunden', 'lang, zusammengebunden', 'lang, zusammengebunden', 'Zopf', 'lang, lose',
-                'lang, lose', 'lang, lose', 'schulterlang', 'schulterlang', 'schulterlang', 'schulterlang',
-                'schulterlang', 'schulterlang', 'schulterlang', 'kurz', 'kurz', 'kurz',
-                'kurz', 'kurz', 'geschoren', 'geschoren', 'geschoren', 'Glatze'].random()}`);
-
-            details.push(`Bart: ${['keiner', 'keiner', 'keiner', 'keiner', 'keiner', 'keiner',
-                'Dreitagebart', 'Dreitagebart', 'Dreitagebart', 'Dreitagebart', 'Dreitagebart', 'Schnurrbart, klein',
-                'Schnurrbart, klein', 'Schnurrbart, klein', 'Schnurrbart, klein', 'Schnurrbart, klein', 'Schnurrbart, groß', 'Schnurrbart, groß',
-                'Schnurrbart, groß', 'Schnurrbart, groß', 'Schnurrbart, groß', 'Koteletten', 'Koteletten', 'Ziegenbart',
-                'Spitzbart', 'gestutzter Vollbart', 'gestutzter Vollbart', 'gestutzter Vollbart', 'gestutzter Vollbart', 'wilder Vollbart'].random()}`);
-
-            details.push(`Haarfarbe: ${['schwarz', 'schwarz', 'schwarz', 'schwarz', 'schwarz', 'dunkelbraun',
-                'dunkelbraun', 'dunkelbraun', 'braun', 'braun', 'braun', 'braun',
-                'dunkelblond', 'dunkelblond', 'dunkelblond', 'blond', 'blond', 'blond',
-                'goldblond', 'goldblond', 'rot', 'weiß', 'kupferfarben', 'silbergrau'].random()}`);
-
-            details.push(`Nase: ${['Stupsnase', 'Stupsnase', 'Stupsnase', 'Stupsnase', 'Stupsnase', 'normal, unauffällig',
-                'normal, unauffällig', 'normal, unauffällig', 'normal, unauffällig', 'normal, unauffällig', 'auffällig groß', 'auffällig groß',
-                'auffällig groß', 'auffällig breit', 'auffällig breit', 'auffällig breit', 'auffällig breit', 'nach oben gebogen, hochnäsig',
-                'nach oben gebogen, hochnäsig', 'nach oben gebogen, hochnäsig', 'Adlernase (Höcker)', 'Adlernase (Höcker)', 'Adlernase (Höcker)', 'krumm / gebrochen'].random()}`);
-
-            details.push(`Kleidung: ${['geflickt, praktisch', 'geflickt, praktisch', 'geflickt, praktisch', 'geflickt, praktisch', 'geflickt, praktisch', 'einfaches Leder und Leinen',
-                'einfaches Leder und Leinen', 'einfaches Leder und Leinen', 'einfaches Leder und Leinen', 'einfaches Leder und Leinen', 'gute Stoffe, bearbeitetes Leder', 'gute Stoffe, bearbeitetes Leder',
-                'gute Stoffe, bearbeitetes Leder', 'gute Stoffe, bearbeitetes Leder', 'gute Stoffe, bearbeitetes Leder', 'sauber, geschmackvoll', 'sauber, geschmackvoll', 'sauber, geschmackvoll',
-                'sauber, geschmackvoll', 'sauber, geschmackvoll', 'ausgesucht, teuer', 'ausgesucht, teuer', 'ausgesucht, teuer', 'übertrieben, bunt'].random()}`);
-
-            details.push(`Gemüt: ${['fröhlich', 'traurig', 'seltsam', 'angestrengt', 'unbeirrbar', 'hoffnungslos',
-                'hoffnungsvoll', 'besessen', 'ahnungslos', 'ängstlich', 'hingebungsvoll', 'angeheitert',
-                'aggressiv', 'heftig', 'vorsichtig', 'alarmiert', 'scharfzüngig', 'ungeschickt',
-                'scharfsinnig', 'aufrecht', 'verstohlen', 'geheimnisvoll', 'bemüht', 'misstrauisch'].random()}` +
-                ` - ${['verliebt', 'jovial', 'erzürnt', 'verträumt', 'paranoid', 'friedfertig',
-                'zufrieden', 'gleichgültig', 'zuversichtlich', 'rachsüchtig', 'angeberisch', 'draufgängerisch',
-                'böswillig', 'gönnerhaft', 'weinselig', 'unbequem', 'gelangweilt', 'aufgeweckt',
-                'neugierig', 'begriffsstutzig', 'ungehobelt', 'besserwisserisch', 'pessimistisch', 'unzufrieden'].random()}`);
-
-            let body= '';
+            let body= "";
 
             for (const detail of details){
-                if (detail === ''){
+                if (detail === ""){
                     body += fixUmlauts(`\n`);
                 } else {
                     body += fixUmlauts(`* ${detail}\n`);
