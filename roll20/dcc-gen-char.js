@@ -4,102 +4,112 @@ on("chat:message", function(msg) {
         return;
     }
 
-    if (msg.content.indexOf('!sgtest') != -1) {
+    const command = msg.content.split(" ");
 
+    if (command[0] == '!sgtest'){
         var character = findObjs({_type: "character", name: "Der Tierbändiger"})[0];
-        log (character);
-
         var attrs = findObjs({
             _type: 'attribute',
             _characterid: character.get('_id')
         });
         log (attrs);
-
     }
 
-    if (msg.content.indexOf('!dcc-gen-char') != -1) {
-
-        var professionRoll = roll(100);
-        var profession = dccTables.professions.find((e) => e.roll.includes(professionRoll));
-
-        var character = createObj("character", {
-            name: "Der " + profession.name,
-            inplayerjournals: "all",
-            controlledby:     "all"
-        });
-
-        log("Der " + profession.name + " created");
-
-        const modifier = {3: -3, 4: -2, 5: -2, 6: -1, 7: -1, 8: -1, 9: 0, 10: 0, 11: 0, 12: 0, 13: +1, 14: +1, 15: +1, 16: +2, 17: +2, 18: +3};
-
-        const strength = roll(6, 3);
-        const agility = roll(6, 3);
-        const stamina = roll(6, 3);
-        const personality = roll(6, 3);
-        const intelligence = roll(6, 3);
-        const luck = roll(6, 3);
-        const hp = roll(4);
-
-        const fateRoll = Math.min(Math.max(roll(30) + modifier[luck], 1), 30);
-        const fate = dccTables.fate[fateRoll];
-
-        const equipment = [
-            profession.equipment.random(),
-            dccTables.equipment.random(),
-            dccTables.specialEquipment.random()
-        ].join('\n');
-
-        createObj("attribute", {name: "Occupation", current: profession.name, characterid: character.id});
-        createObj("attribute", {name: "race", current: profession.race, characterid: character.id});
-        createObj("attribute", {name: "HP", current: hp, max: hp, characterid: character.id});
-
-        createObj("attribute", {name: "str", current: strength, characterid: character.id});
-        createObj("attribute", {name: "strMax", current: strength, characterid: character.id});
-        createObj("attribute", {name: "strMod", current: modifier[strength], characterid: character.id});
-
-        createObj("attribute", {name: "agi", current: agility, characterid: character.id});
-        createObj("attribute", {name: "agiMax", current: agility, characterid: character.id});
-        createObj("attribute", {name: "agiMod", current: modifier[agility], characterid: character.id});
-
-        createObj("attribute", {name: "sta", current: stamina, characterid: character.id});
-        createObj("attribute", {name: "staMax", current: stamina, characterid: character.id});
-        createObj("attribute", {name: "staMod", current: modifier[stamina], characterid: character.id});
-
-        createObj("attribute", {name: "per", current: personality, characterid: character.id});
-        createObj("attribute", {name: "perMax", current: personality, characterid: character.id});
-        createObj("attribute", {name: "perMod", current: modifier[personality], characterid: character.id});
-
-        createObj("attribute", {name: "int", current: intelligence, characterid: character.id});
-        createObj("attribute", {name: "intMax", current: intelligence, characterid: character.id});
-        createObj("attribute", {name: "intMod", current: modifier[intelligence], characterid: character.id});
-
-        createObj("attribute", {name: "luck", current: luck, characterid: character.id});
-        createObj("attribute", {name: "luckMax", current: luck, characterid: character.id});
-        createObj("attribute", {name: "luckMod", current: modifier[luck], characterid: character.id});
-
-        createObj("attribute", {name: "luckStarting", current: luck, characterid: character.id});
-        createObj("attribute", {name: "luckStartingMod", current: modifier[luck], characterid: character.id});
-
-        createObj("attribute", {name: "birthAugur", current: fate.name, characterid: character.id});
-        createObj("attribute", {name: "luckyRoll", current: (modifier[luck] >= 0 ? '+' : '') + modifier[luck] + " auf " + fate.omen, characterid: character.id});
-
-        createObj("attribute", {name: "Equipment", current: equipment, characterid: character.id});
-
-        if (!!profession.weapon.range){
-            createObj("attribute", {name: "repeating_rangedweapon_#1_rangedWeaponName", current: profession.weapon.name, characterid: character.id});
-            createObj("attribute", {name: "repeating_rangedweapon_#1_rangedDmg", current: profession.weapon.die, characterid: character.id});
-            createObj("attribute", {name: "repeating_rangedweapon_#1_rangedDistanceShort", current: profession.weapon.range, characterid: character.id});
-            createObj("attribute", {name: "repeating_rangedweapon_#1_rangedDistanceMed", current: profession.weapon.range * 2, characterid: character.id});
-            createObj("attribute", {name: "repeating_rangedweapon_#1_rangedDistanceLong", current: profession.weapon.range * 3, characterid: character.id});
-        } else {
-            createObj("attribute", {name: "repeating_meleeweapon_#1_meleeWeaponName", current: profession.weapon.name, characterid: character.id});
-            createObj("attribute", {name: "repeating_meleeweapon_#1_meleeDmg", current: profession.weapon.die, characterid: character.id});
+    if (command[0] == '!dcc-gen-char') {
+        const count = !!command[1] ? command[1] : 1;
+        for (i = 0; i < count; i++) {
+            generateCharacter();
         }
-
-        character.set("bio", '<ul>' + dccTables.traits.map((trait) => `<li>${trait.name}: ${trait.values.map((v) => v.random()).join('-')}</li>`).join('') + '</ul>');
-
     }
 });
+
+function generateCharacter() {
+
+    var professionRoll = roll(100);
+    var profession = dccTables.professions.find((e) => e.roll.includes(professionRoll));
+
+    var character = createObj("character", {
+        name: "Der " + profession.name,
+        inplayerjournals: "all",
+        controlledby:     "all"
+    });
+
+    log("Der " + profession.name + " created");
+
+    const modifier = {3: -3, 4: -2, 5: -2, 6: -1, 7: -1, 8: -1, 9: 0, 10: 0, 11: 0, 12: 0, 13: +1, 14: +1, 15: +1, 16: +2, 17: +2, 18: +3};
+
+    const strength = roll(6, 3);
+    const agility = roll(6, 3);
+    const stamina = roll(6, 3);
+    const personality = roll(6, 3);
+    const intelligence = roll(6, 3);
+    const luck = roll(6, 3);
+    const hp = roll(4);
+
+    const fateRoll = Math.min(Math.max(roll(30) + modifier[luck], 1), 30);
+    const fate = dccTables.fate[fateRoll];
+
+    const equipment = [
+        profession.equipment.random(),
+        dccTables.equipment.random(),
+        dccTables.specialEquipment.random()
+    ].join('\n');
+
+    createObj("attribute", {name: "Occupation", current: profession.name, characterid: character.id});
+    createObj("attribute", {name: "race", current: profession.race, characterid: character.id});
+    createObj("attribute", {name: "HP", current: hp, max: hp, characterid: character.id});
+
+    createObj("attribute", {name: "str", current: strength, characterid: character.id});
+    createObj("attribute", {name: "strMax", current: strength, characterid: character.id});
+    createObj("attribute", {name: "strMod", current: modifier[strength], characterid: character.id});
+
+    createObj("attribute", {name: "agi", current: agility, characterid: character.id});
+    createObj("attribute", {name: "agiMax", current: agility, characterid: character.id});
+    createObj("attribute", {name: "agiMod", current: modifier[agility], characterid: character.id});
+
+    createObj("attribute", {name: "sta", current: stamina, characterid: character.id});
+    createObj("attribute", {name: "staMax", current: stamina, characterid: character.id});
+    createObj("attribute", {name: "staMod", current: modifier[stamina], characterid: character.id});
+
+    createObj("attribute", {name: "per", current: personality, characterid: character.id});
+    createObj("attribute", {name: "perMax", current: personality, characterid: character.id});
+    createObj("attribute", {name: "perMod", current: modifier[personality], characterid: character.id});
+
+    createObj("attribute", {name: "int", current: intelligence, characterid: character.id});
+    createObj("attribute", {name: "intMax", current: intelligence, characterid: character.id});
+    createObj("attribute", {name: "intMod", current: modifier[intelligence], characterid: character.id});
+
+    createObj("attribute", {name: "luck", current: luck, characterid: character.id});
+    createObj("attribute", {name: "luckMax", current: luck, characterid: character.id});
+    createObj("attribute", {name: "luckMod", current: modifier[luck], characterid: character.id});
+
+    createObj("attribute", {name: "luckStarting", current: luck, characterid: character.id});
+    createObj("attribute", {name: "luckStartingMod", current: modifier[luck], characterid: character.id});
+
+    createObj("attribute", {name: "birthAugur", current: fate.name, characterid: character.id});
+    createObj("attribute", {name: "luckyRoll", current: (modifier[luck] >= 0 ? '+' : '') + modifier[luck] + " auf " + fate.omen, characterid: character.id});
+
+    createObj("attribute", {name: "Equipment", current: equipment, characterid: character.id});
+
+    if (!!profession.weapon.range){
+        createObj("attribute", {name: "repeating_rangedweapon_#1_rangedWeaponName", current: profession.weapon.name, characterid: character.id});
+        createObj("attribute", {name: "repeating_rangedweapon_#1_rangedDmg", current: profession.weapon.die, characterid: character.id});
+        createObj("attribute", {name: "repeating_rangedweapon_#1_rangedDistanceShort", current: profession.weapon.range, characterid: character.id});
+        createObj("attribute", {name: "repeating_rangedweapon_#1_rangedDistanceMed", current: profession.weapon.range * 2, characterid: character.id});
+        createObj("attribute", {name: "repeating_rangedweapon_#1_rangedDistanceLong", current: profession.weapon.range * 3, characterid: character.id});
+        if (fateRoll == 9){
+            createObj("attribute", {name: "repeating_rangedweapon_#1_zeroWeaponLuckyRoll", current: "@{luckStartingMod}", characterid: character.id});
+        }
+    } else {
+        createObj("attribute", {name: "repeating_meleeweapon_#1_meleeWeaponName", current: profession.weapon.name, characterid: character.id});
+        createObj("attribute", {name: "repeating_meleeweapon_#1_meleeDmg", current: profession.weapon.die, characterid: character.id});
+        if (fateRoll == 9){
+            createObj("attribute", {name: "repeating_meleeweapon_#1_zeroWeaponLuckyRoll", current: "@{luckStartingMod}", characterid: character.id});
+        }
+    }
+
+    character.set("bio", '<ul>' + dccTables.traits.map((trait) => `<li>${trait.name}: ${trait.values.map((v) => v.random()).join('-')}</li>`).join('') + '</ul>');
+}
 
 Array.prototype.random = function () {
     return this[Math.floor((Math.random()*this.length))];
