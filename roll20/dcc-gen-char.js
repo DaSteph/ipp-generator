@@ -44,7 +44,7 @@ function generateCharacter() {
     const personality = roll(6, 3);
     const intelligence = roll(6, 3);
     const luck = roll(6, 3);
-    const hp = roll(4);
+    const hp = Math.max(roll(4) + modifier[stamina], 1);
 
     const fateRoll = Math.min(Math.max(roll(30) + modifier[luck], 1), 30);
     const fate = dccTables.fate[fateRoll];
