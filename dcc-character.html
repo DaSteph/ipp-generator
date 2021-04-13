@@ -261,7 +261,7 @@
             details.push("Zähigkeitswurf +0");
             details.push("Reflexwurf +0");
             details.push("Willenskraftwurf +0");
-            details.push(`Trefferpunkte: ${roll(4)}`);
+            details.push(`Trefferpunkte: ${Math.max(roll(4) + modifier[stamina], 1)}`);
             details.push("Erfahrung: 0 EP");
 
             details.push("");
