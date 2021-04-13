@@ -92,19 +92,20 @@ function generateCharacter() {
     createObj("attribute", {name: "Equipment", current: equipment, characterid: character.id});
 
     if (!!profession.weapon.range){
-        createObj("attribute", {name: "repeating_rangedweapon_#1_rangedWeaponName", current: profession.weapon.name, characterid: character.id});
-        createObj("attribute", {name: "repeating_rangedweapon_#1_rangedDmg", current: profession.weapon.die, characterid: character.id});
-        createObj("attribute", {name: "repeating_rangedweapon_#1_rangedDistanceShort", current: profession.weapon.range, characterid: character.id});
-        createObj("attribute", {name: "repeating_rangedweapon_#1_rangedDistanceMed", current: profession.weapon.range * 2, characterid: character.id});
-        createObj("attribute", {name: "repeating_rangedweapon_#1_rangedDistanceLong", current: profession.weapon.range * 3, characterid: character.id});
+        createObj("attribute", {name: "repeating_rangedweapon_001_rangedWeaponName", current: profession.weapon.name, characterid: character.id});
+        createObj("attribute", {name: "repeating_rangedweapon_001_rangedDmg", current: profession.weapon.die, characterid: character.id});
+        createObj("attribute", {name: "repeating_rangedweapon_001_rangedDistanceShort", current: profession.weapon.range, characterid: character.id});
+        createObj("attribute", {name: "repeating_rangedweapon_001_rangedDistanceMed", current: profession.weapon.range * 2, characterid: character.id});
+        createObj("attribute", {name: "repeating_rangedweapon_001_rangedDistanceLong", current: profession.weapon.range * 3, characterid: character.id});
+        createObj("attribute", {name: "repeating_rangedweapon_001_rangedAttackEffectiveDice", current: "d20", characterid: character.id});
         if (fateRoll == 9){
-            createObj("attribute", {name: "repeating_rangedweapon_#1_zeroWeaponLuckyRoll", current: "@{luckStartingMod}", characterid: character.id});
+            createObj("attribute", {name: "repeating_rangedweapon_001_zeroWeaponLuckyRoll", current: "@{luckStartingMod}", characterid: character.id});
         }
     } else {
-        createObj("attribute", {name: "repeating_meleeweapon_#1_meleeWeaponName", current: profession.weapon.name, characterid: character.id});
-        createObj("attribute", {name: "repeating_meleeweapon_#1_meleeDmg", current: profession.weapon.die, characterid: character.id});
+        createObj("attribute", {name: "repeating_meleeweapon_001_meleeWeaponName", current: profession.weapon.name, characterid: character.id});
+        createObj("attribute", {name: "repeating_meleeweapon_001_meleeDmg", current: profession.weapon.die, characterid: character.id});
         if (fateRoll == 9){
-            createObj("attribute", {name: "repeating_meleeweapon_#1_zeroWeaponLuckyRoll", current: "@{luckStartingMod}", characterid: character.id});
+            createObj("attribute", {name: "repeating_meleeweapon_001_zeroWeaponLuckyRoll", current: "@{luckStartingMod}", characterid: character.id});
         }
     }
 
